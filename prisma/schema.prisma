@@ -1,14 +1,45 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// Prisma Schema - Catalog Service
+// Database: cropfresh_catalog
+// Purpose: Crop listings, inventory, pricing
 
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+// Crop Model - Master list of crops
+model Crop {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique @db.VarChar(100)
+  category    String    @db.VarChar(50)
+  basePrice   Decimal   @map("base_price") @db.Decimal(10, 2)
+  unit        String    @db.VarChar(20) // kg, ton, etc.
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt   DateTime? @map("deleted_at") @db.Timestamptz(6)
+
+  inventory   Inventory[]
+
+  @@map("crops")
+}
+
+// Inventory Model - Farmer's available produce
+model Inventory {
+  id          Int       @id @default(autoincrement())
+  cropId      Int       @map("crop_id")
+  farmerId    Int       @map("farmer_id") // Reference to Auth service User ID
+  quantity    Decimal   @db.Decimal(10, 2)
+  quality     String?   @db.VarChar(50) // Grade A, B, C
+  harvestDate DateTime? @map("harvest_date") @db.Date
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt   DateTime? @map("deleted_at") @db.Timestamptz(6)
+
+  crop        Crop      @relation(fields: [cropId], references: [id])
+
+  @@map("inventory")
 }
