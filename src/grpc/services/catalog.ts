@@ -3,28 +3,16 @@ import { CatalogServiceHandlers } from '../../protos/cropfresh/catalog/CatalogSe
 import { Logger } from 'pino';
 
 export const catalogServiceHandlers = (logger: Logger): CatalogServiceHandlers => ({
-  GetProduct: (call, callback) => {
-    logger.info('GetProduct called');
-    callback(null, { id: call.request.id, name: 'Stub Product', price: 100, quantity: 10 });
+  ListProduce: (call, callback) => {
+    logger.info('ListProduce called');
+    callback(null, { items: [], total: 0, page: 1 });
   },
-  CheckAvailability: (call, callback) => {
-    logger.info('CheckAvailability called');
-    callback(null, { available: true, quantity: 10 });
+  GetProduceDetails: (call, callback) => {
+    logger.info('GetProduceDetails called');
+    callback(null, { item: { id: '1', name: 'Test Produce' } as any, digitalTwinId: 'dt-1' });
   },
-  CreateProduct: (call, callback) => {
-    logger.info('CreateProduct called');
-    callback(null, { id: 'new-id', ...call.request });
-  },
-  UpdateProduct: (call, callback) => {
-    logger.info('UpdateProduct called');
-    callback(null, { ...call.request });
-  },
-  DeleteProduct: (call, callback) => {
-    logger.info('DeleteProduct called');
-    callback(null, { success: true });
-  },
-  ListProducts: (call, callback) => {
-    logger.info('ListProducts called');
-    callback(null, { products: [], total: 0 });
+  UpdateInventory: (call, callback) => {
+    logger.info('UpdateInventory called');
+    callback(null, { success: true, newQuantity: 100 });
   }
 });
