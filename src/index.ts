@@ -1,4 +1,7 @@
-﻿import express from 'express';
+import { GrpcServer } from './grpc/server';
+import { catalogServiceHandlers } from './grpc/services/catalog';
+import path from 'path';
+import express from 'express';
 import pino from 'pino';
 
 const app = express();
@@ -40,3 +43,24 @@ app.listen(PORT, () => {
 });
 
 export default app;
+
+// gRPC Server Setup
+const GRPC_PORT = parseInt(process.env.GRPC_PORT || '50051', 10);
+const PROTO_PATH = path.join(__dirname, '../protos/proto/catalog.proto');
+const PACKAGE_NAME = 'cropfresh.catalog';
+const SERVICE_NAME = 'Service';
+
+(async () => {
+  try {
+    const grpcServer = new GrpcServer(GRPC_PORT, logger);
+    const packageDef = grpcServer.loadProto(PROTO_PATH);
+    const proto = packageDef.cropfresh.catalog as any;
+    const serviceDef = proto[SERVICE_NAME].service;
+    
+    grpcServer.addService(serviceDef, catalogServiceHandlers(logger));
+    
+    await grpcServer.start();
+  } catch (err) {
+    logger.error(err, 'Failed to start gRPC server');
+  }
+})();
