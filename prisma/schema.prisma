@@ -3,7 +3,7 @@
 // Purpose: Crop listings, inventory, pricing
 
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
   output   = "../src/generated/prisma"
 }
 
@@ -13,16 +13,16 @@ datasource db {
 
 // Crop Model - Master list of crops
 model Crop {
-  id          Int       @id @default(autoincrement())
-  name        String    @unique @db.VarChar(100)
-  category    String    @db.VarChar(50)
-  basePrice   Decimal   @map("base_price") @db.Decimal(10, 2)
-  unit        String    @db.VarChar(20) // kg, ton, etc.
-  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
-  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
-  deletedAt   DateTime? @map("deleted_at") @db.Timestamptz(6)
+  id        Int       @id @default(autoincrement())
+  name      String    @unique @db.VarChar(100)
+  category  String    @db.VarChar(50)
+  basePrice Decimal   @map("base_price") @db.Decimal(10, 2)
+  unit      String    @db.VarChar(20) // kg, ton, etc.
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(6)
 
-  inventory   Inventory[]
+  inventory Inventory[]
 
   @@map("crops")
 }
@@ -39,7 +39,7 @@ model Inventory {
   updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
   deletedAt   DateTime? @map("deleted_at") @db.Timestamptz(6)
 
-  crop        Crop      @relation(fields: [cropId], references: [id])
+  crop Crop @relation(fields: [cropId], references: [id])
 
   @@map("inventory")
 }
