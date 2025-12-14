@@ -23,6 +23,7 @@ model Crop {
   deletedAt DateTime? @map("deleted_at") @db.Timestamptz(6)
 
   inventory Inventory[]
+  listings  Listing[]
 
   @@map("crops")
 }
@@ -42,4 +43,83 @@ model Inventory {
   crop Crop @relation(fields: [cropId], references: [id])
 
   @@map("inventory")
+}
+
+// ============================================================================
+// LISTING DOMAIN - Story 3.1: Voice/Manual/Photo Crop Listing
+// ============================================================================
+
+/// Listing status progression:
+/// DRAFT -> PENDING_PHOTO -> PENDING_GRADING -> ACTIVE -> MATCHED -> COMPLETED
+/// Alternative paths: CANCELLED, EXPIRED
+enum ListingStatus {
+  DRAFT // Initial creation (voice/manual input done)
+  PENDING_PHOTO // Waiting for photo upload
+  PENDING_GRADING // Photo uploaded, AI grading in progress
+  ACTIVE // Graded and visible to buyers
+  MATCHED // Buyer matched, pending pickup
+  IN_TRANSIT // Produce picked up by hauler
+  DELIVERED // Delivered to buyer
+  COMPLETED // Payment settled
+  CANCELLED // Farmer or system cancelled
+  EXPIRED // No buyer match within timeframe
+}
+
+/// Entry mode determines listing creation flow
+enum ListingEntryMode {
+  MANUAL // Type to List - farmer types everything
+  VOICE // Speak to List - voice-to-text with NLP extraction
+  PHOTO // Photo-first - AI detects crop from image
+}
+
+/// Farmer's crop listing for sale
+model Listing {
+  id       Int @id @default(autoincrement())
+  farmerId Int @map("farmer_id")
+  cropId   Int @map("crop_id")
+
+  // Quantity
+  quantityKg Decimal  @map("quantity_kg") @db.Decimal(10, 2)
+  unit       String   @default("kg") @db.VarChar(20)
+  displayQty Decimal? @map("display_qty") @db.Decimal(10, 2)
+
+  // Quality assessment
+  qualityGrade String?  @map("quality_grade") @db.VarChar(10) // A, B, C
+  aiGrade      String?  @map("ai_grade") @db.VarChar(10) // AI-assessed
+  aiConfidence Decimal? @map("ai_confidence") @db.Decimal(5, 4) // 0.0000-1.0000
+
+  // Media
+  photoUrl       String? @map("photo_url") @db.VarChar(500)
+  photoThumbnail String? @map("photo_thumbnail") @db.VarChar(500)
+
+  // Entry tracking (manual/voice/photo)
+  entryMode     ListingEntryMode @default(MANUAL) @map("entry_mode")
+  voiceText     String?          @map("voice_text") @db.Text // Raw STT output
+  voiceLanguage String?          @map("voice_language") @db.VarChar(10) // kn, hi, en, ta, te
+
+  // Pricing
+  estimatedPrice Decimal? @map("estimated_price") @db.Decimal(12, 2)
+  pricePerKg     Decimal? @map("price_per_kg") @db.Decimal(10, 2)
+
+  // Status and dates
+  status      ListingStatus @default(DRAFT)
+  harvestDate DateTime?     @map("harvest_date") @db.Date
+  expiresAt   DateTime?     @map("expires_at") @db.Timestamptz(6)
+  matchedAt   DateTime?     @map("matched_at") @db.Timestamptz(6)
+  completedAt DateTime?     @map("completed_at") @db.Timestamptz(6)
+
+  // Audit
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(6)
+
+  // Relations
+  crop Crop @relation(fields: [cropId], references: [id])
+
+  // Indexes for common queries
+  @@index([farmerId])
+  @@index([status])
+  @@index([cropId])
+  @@index([createdAt(sort: Desc)])
+  @@map("listings")
 }
