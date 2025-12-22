@@ -3,6 +3,7 @@ import './tracing';
 
 import { GrpcServer } from './grpc/server';
 import { catalogServiceHandlers } from './grpc/services/catalog';
+import { photoGrpcHandlers } from './grpc/services/photo';
 import path from 'path';
 import express from 'express';
 import { logger } from './utils/logger';
@@ -49,18 +50,23 @@ export default app;
 const GRPC_PORT = parseInt(process.env.GRPC_PORT || '50051', 10);
 const PROTO_PATH = path.join(__dirname, '../protos/proto/catalog.proto');
 const PACKAGE_NAME = 'cropfresh.catalog';
-const SERVICE_NAME_GRPC = 'Service';
 
 (async () => {
   try {
     const grpcServer = new GrpcServer(GRPC_PORT, logger);
     const packageDef = grpcServer.loadProto(PROTO_PATH);
     const proto = packageDef.cropfresh.catalog as any;
-    const serviceDef = proto[SERVICE_NAME_GRPC].service;
 
-    grpcServer.addService(serviceDef, catalogServiceHandlers(logger));
+    // Register CatalogService handlers
+    const catalogServiceDef = proto['CatalogService'].service;
+    grpcServer.addService(catalogServiceDef, catalogServiceHandlers(logger));
+
+    // Register PhotoService handlers (Story 3.2)
+    const photoServiceDef = proto['PhotoService'].service;
+    grpcServer.addService(photoServiceDef, photoGrpcHandlers(logger));
 
     await grpcServer.start();
+    logger.info('Registered services: CatalogService, PhotoService');
   } catch (err) {
     logger.error(err, 'Failed to start gRPC server');
   }

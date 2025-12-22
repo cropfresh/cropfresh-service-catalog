@@ -7,6 +7,8 @@
         "build": "tsc",
         "dev": "nodemon --watch src --exec ts-node src/index.ts",
         "start": "node dist/index.js",
+        "test": "jest --coverage",
+        "test:watch": "jest --watch",
         "proto:generate": "proto-loader-gen-types --longs=String --enums=String --defaults --oneofs --grpcLib=@grpc/grpc-js --outDir=src/protos protos/proto/auth.proto protos/proto/catalog.proto protos/proto/order.proto protos/proto/logistics.proto protos/proto/payment.proto protos/proto/ai.proto"
     },
     "keywords": [],
@@ -14,6 +16,8 @@
     "license": "ISC",
     "type": "commonjs",
     "dependencies": {
+        "@aws-sdk/client-s3": "^3.956.0",
+        "@aws-sdk/s3-request-presigner": "^3.956.0",
         "@grpc/grpc-js": "1.12",
         "@grpc/proto-loader": "^0.7.15",
         "@opentelemetry/auto-instrumentations-node": "^0.67.2",
@@ -32,11 +36,15 @@
     },
     "devDependencies": {
         "@types/express": "5.0",
+        "@types/jest": "^29.5.12",
         "@types/node": "^22.19.1",
         "@types/pino-http": "^5.8.4",
         "@types/uuid": "^10.0.0",
+        "jest": "^29.7.0",
+        "jest-mock-extended": "^4.0.0",
         "nodemon": "3.1",
         "prisma": "7.0",
+        "ts-jest": "^29.2.5",
         "ts-node": "10.9",
         "typescript": "5.7"
     }

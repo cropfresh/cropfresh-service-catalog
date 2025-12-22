@@ -386,7 +386,8 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 export const ModelName = {
   Crop: 'Crop',
   Inventory: 'Inventory',
-  Listing: 'Listing'
+  Listing: 'Listing',
+  ListingPhoto: 'ListingPhoto'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -402,7 +403,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "crop" | "inventory" | "listing"
+    modelProps: "crop" | "inventory" | "listing" | "listingPhoto"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -628,6 +629,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ListingPhoto: {
+      payload: Prisma.$ListingPhotoPayload<ExtArgs>
+      fields: Prisma.ListingPhotoFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ListingPhotoFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ListingPhotoPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ListingPhotoFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ListingPhotoPayload>
+        }
+        findFirst: {
+          args: Prisma.ListingPhotoFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ListingPhotoPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ListingPhotoFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ListingPhotoPayload>
+        }
+        findMany: {
+          args: Prisma.ListingPhotoFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ListingPhotoPayload>[]
+        }
+        create: {
+          args: Prisma.ListingPhotoCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ListingPhotoPayload>
+        }
+        createMany: {
+          args: Prisma.ListingPhotoCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ListingPhotoCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ListingPhotoPayload>[]
+        }
+        delete: {
+          args: Prisma.ListingPhotoDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ListingPhotoPayload>
+        }
+        update: {
+          args: Prisma.ListingPhotoUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ListingPhotoPayload>
+        }
+        deleteMany: {
+          args: Prisma.ListingPhotoDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ListingPhotoUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ListingPhotoUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ListingPhotoPayload>[]
+        }
+        upsert: {
+          args: Prisma.ListingPhotoUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ListingPhotoPayload>
+        }
+        aggregate: {
+          args: Prisma.ListingPhotoAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateListingPhoto>
+        }
+        groupBy: {
+          args: Prisma.ListingPhotoGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ListingPhotoGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ListingPhotoCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ListingPhotoCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -724,6 +799,31 @@ export const ListingScalarFieldEnum = {
 } as const
 
 export type ListingScalarFieldEnum = (typeof ListingScalarFieldEnum)[keyof typeof ListingScalarFieldEnum]
+
+
+export const ListingPhotoScalarFieldEnum = {
+  id: 'id',
+  listingId: 'listingId',
+  photoUrl: 'photoUrl',
+  thumbnailUrl: 'thumbnailUrl',
+  s3Key: 's3Key',
+  originalFilename: 'originalFilename',
+  contentType: 'contentType',
+  fileSizeBytes: 'fileSizeBytes',
+  originalSizeBytes: 'originalSizeBytes',
+  width: 'width',
+  height: 'height',
+  latitude: 'latitude',
+  longitude: 'longitude',
+  deviceModel: 'deviceModel',
+  qualityScore: 'qualityScore',
+  validationStatus: 'validationStatus',
+  validationMessage: 'validationMessage',
+  isPrimary: 'isPrimary',
+  createdAt: 'createdAt'
+} as const
+
+export type ListingPhotoScalarFieldEnum = (typeof ListingPhotoScalarFieldEnum)[keyof typeof ListingPhotoScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -841,6 +941,27 @@ export type ListEnumListingStatusFieldRefInput<$PrismaModel> = FieldRefInputType
 
 
 /**
+ * Reference to a field of type 'PhotoValidationStatus'
+ */
+export type EnumPhotoValidationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PhotoValidationStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'PhotoValidationStatus[]'
+ */
+export type ListEnumPhotoValidationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PhotoValidationStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Boolean'
+ */
+export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -935,6 +1056,7 @@ export type GlobalOmitConfig = {
   crop?: Prisma.CropOmit
   inventory?: Prisma.InventoryOmit
   listing?: Prisma.ListingOmit
+  listingPhoto?: Prisma.ListingPhotoOmit
 }
 
 /* Types for Logging */

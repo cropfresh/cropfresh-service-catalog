@@ -397,6 +397,7 @@ export type ListingWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Listing"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Listing"> | Date | string | null
   crop?: Prisma.XOR<Prisma.CropScalarRelationFilter, Prisma.CropWhereInput>
+  photos?: Prisma.ListingPhotoListRelationFilter
 }
 
 export type ListingOrderByWithRelationInput = {
@@ -425,6 +426,7 @@ export type ListingOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   crop?: Prisma.CropOrderByWithRelationInput
+  photos?: Prisma.ListingPhotoOrderByRelationAggregateInput
 }
 
 export type ListingWhereUniqueInput = Prisma.AtLeast<{
@@ -456,6 +458,7 @@ export type ListingWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"Listing"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Listing"> | Date | string | null
   crop?: Prisma.XOR<Prisma.CropScalarRelationFilter, Prisma.CropWhereInput>
+  photos?: Prisma.ListingPhotoListRelationFilter
 }, "id">
 
 export type ListingOrderByWithAggregationInput = {
@@ -544,6 +547,7 @@ export type ListingCreateInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   crop: Prisma.CropCreateNestedOneWithoutListingsInput
+  photos?: Prisma.ListingPhotoCreateNestedManyWithoutListingInput
 }
 
 export type ListingUncheckedCreateInput = {
@@ -571,6 +575,7 @@ export type ListingUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
+  photos?: Prisma.ListingPhotoUncheckedCreateNestedManyWithoutListingInput
 }
 
 export type ListingUpdateInput = {
@@ -597,6 +602,7 @@ export type ListingUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   crop?: Prisma.CropUpdateOneRequiredWithoutListingsNestedInput
+  photos?: Prisma.ListingPhotoUpdateManyWithoutListingNestedInput
 }
 
 export type ListingUncheckedUpdateInput = {
@@ -624,6 +630,7 @@ export type ListingUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  photos?: Prisma.ListingPhotoUncheckedUpdateManyWithoutListingNestedInput
 }
 
 export type ListingCreateManyInput = {
@@ -818,6 +825,11 @@ export type ListingSumOrderByAggregateInput = {
   pricePerKg?: Prisma.SortOrder
 }
 
+export type ListingScalarRelationFilter = {
+  is?: Prisma.ListingWhereInput
+  isNot?: Prisma.ListingWhereInput
+}
+
 export type ListingCreateNestedManyWithoutCropInput = {
   create?: Prisma.XOR<Prisma.ListingCreateWithoutCropInput, Prisma.ListingUncheckedCreateWithoutCropInput> | Prisma.ListingCreateWithoutCropInput[] | Prisma.ListingUncheckedCreateWithoutCropInput[]
   connectOrCreate?: Prisma.ListingCreateOrConnectWithoutCropInput | Prisma.ListingCreateOrConnectWithoutCropInput[]
@@ -876,6 +888,20 @@ export type EnumListingStatusFieldUpdateOperationsInput = {
   set?: $Enums.ListingStatus
 }
 
+export type ListingCreateNestedOneWithoutPhotosInput = {
+  create?: Prisma.XOR<Prisma.ListingCreateWithoutPhotosInput, Prisma.ListingUncheckedCreateWithoutPhotosInput>
+  connectOrCreate?: Prisma.ListingCreateOrConnectWithoutPhotosInput
+  connect?: Prisma.ListingWhereUniqueInput
+}
+
+export type ListingUpdateOneRequiredWithoutPhotosNestedInput = {
+  create?: Prisma.XOR<Prisma.ListingCreateWithoutPhotosInput, Prisma.ListingUncheckedCreateWithoutPhotosInput>
+  connectOrCreate?: Prisma.ListingCreateOrConnectWithoutPhotosInput
+  upsert?: Prisma.ListingUpsertWithoutPhotosInput
+  connect?: Prisma.ListingWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ListingUpdateToOneWithWhereWithoutPhotosInput, Prisma.ListingUpdateWithoutPhotosInput>, Prisma.ListingUncheckedUpdateWithoutPhotosInput>
+}
+
 export type ListingCreateWithoutCropInput = {
   farmerId: number
   quantityKg: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -899,6 +925,7 @@ export type ListingCreateWithoutCropInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
+  photos?: Prisma.ListingPhotoCreateNestedManyWithoutListingInput
 }
 
 export type ListingUncheckedCreateWithoutCropInput = {
@@ -925,6 +952,7 @@ export type ListingUncheckedCreateWithoutCropInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
+  photos?: Prisma.ListingPhotoUncheckedCreateNestedManyWithoutListingInput
 }
 
 export type ListingCreateOrConnectWithoutCropInput = {
@@ -983,6 +1011,128 @@ export type ListingScalarWhereInput = {
   deletedAt?: Prisma.DateTimeNullableFilter<"Listing"> | Date | string | null
 }
 
+export type ListingCreateWithoutPhotosInput = {
+  farmerId: number
+  quantityKg: runtime.Decimal | runtime.DecimalJsLike | number | string
+  unit?: string
+  displayQty?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  qualityGrade?: string | null
+  aiGrade?: string | null
+  aiConfidence?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  photoUrl?: string | null
+  photoThumbnail?: string | null
+  entryMode?: $Enums.ListingEntryMode
+  voiceText?: string | null
+  voiceLanguage?: string | null
+  estimatedPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pricePerKg?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  status?: $Enums.ListingStatus
+  harvestDate?: Date | string | null
+  expiresAt?: Date | string | null
+  matchedAt?: Date | string | null
+  completedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  crop: Prisma.CropCreateNestedOneWithoutListingsInput
+}
+
+export type ListingUncheckedCreateWithoutPhotosInput = {
+  id?: number
+  farmerId: number
+  cropId: number
+  quantityKg: runtime.Decimal | runtime.DecimalJsLike | number | string
+  unit?: string
+  displayQty?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  qualityGrade?: string | null
+  aiGrade?: string | null
+  aiConfidence?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  photoUrl?: string | null
+  photoThumbnail?: string | null
+  entryMode?: $Enums.ListingEntryMode
+  voiceText?: string | null
+  voiceLanguage?: string | null
+  estimatedPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pricePerKg?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  status?: $Enums.ListingStatus
+  harvestDate?: Date | string | null
+  expiresAt?: Date | string | null
+  matchedAt?: Date | string | null
+  completedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+}
+
+export type ListingCreateOrConnectWithoutPhotosInput = {
+  where: Prisma.ListingWhereUniqueInput
+  create: Prisma.XOR<Prisma.ListingCreateWithoutPhotosInput, Prisma.ListingUncheckedCreateWithoutPhotosInput>
+}
+
+export type ListingUpsertWithoutPhotosInput = {
+  update: Prisma.XOR<Prisma.ListingUpdateWithoutPhotosInput, Prisma.ListingUncheckedUpdateWithoutPhotosInput>
+  create: Prisma.XOR<Prisma.ListingCreateWithoutPhotosInput, Prisma.ListingUncheckedCreateWithoutPhotosInput>
+  where?: Prisma.ListingWhereInput
+}
+
+export type ListingUpdateToOneWithWhereWithoutPhotosInput = {
+  where?: Prisma.ListingWhereInput
+  data: Prisma.XOR<Prisma.ListingUpdateWithoutPhotosInput, Prisma.ListingUncheckedUpdateWithoutPhotosInput>
+}
+
+export type ListingUpdateWithoutPhotosInput = {
+  farmerId?: Prisma.IntFieldUpdateOperationsInput | number
+  quantityKg?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  unit?: Prisma.StringFieldUpdateOperationsInput | string
+  displayQty?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  qualityGrade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aiGrade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aiConfidence?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoThumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  entryMode?: Prisma.EnumListingEntryModeFieldUpdateOperationsInput | $Enums.ListingEntryMode
+  voiceText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  voiceLanguage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  estimatedPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pricePerKg?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  status?: Prisma.EnumListingStatusFieldUpdateOperationsInput | $Enums.ListingStatus
+  harvestDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  matchedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  crop?: Prisma.CropUpdateOneRequiredWithoutListingsNestedInput
+}
+
+export type ListingUncheckedUpdateWithoutPhotosInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  farmerId?: Prisma.IntFieldUpdateOperationsInput | number
+  cropId?: Prisma.IntFieldUpdateOperationsInput | number
+  quantityKg?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  unit?: Prisma.StringFieldUpdateOperationsInput | string
+  displayQty?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  qualityGrade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aiGrade?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aiConfidence?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoThumbnail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  entryMode?: Prisma.EnumListingEntryModeFieldUpdateOperationsInput | $Enums.ListingEntryMode
+  voiceText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  voiceLanguage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  estimatedPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  pricePerKg?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  status?: Prisma.EnumListingStatusFieldUpdateOperationsInput | $Enums.ListingStatus
+  harvestDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  matchedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+}
+
 export type ListingCreateManyCropInput = {
   id?: number
   farmerId: number
@@ -1032,6 +1182,7 @@ export type ListingUpdateWithoutCropInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  photos?: Prisma.ListingPhotoUpdateManyWithoutListingNestedInput
 }
 
 export type ListingUncheckedUpdateWithoutCropInput = {
@@ -1058,6 +1209,7 @@ export type ListingUncheckedUpdateWithoutCropInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  photos?: Prisma.ListingPhotoUncheckedUpdateManyWithoutListingNestedInput
 }
 
 export type ListingUncheckedUpdateManyWithoutCropInput = {
@@ -1087,6 +1239,35 @@ export type ListingUncheckedUpdateManyWithoutCropInput = {
 }
 
 
+/**
+ * Count Type ListingCountOutputType
+ */
+
+export type ListingCountOutputType = {
+  photos: number
+}
+
+export type ListingCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  photos?: boolean | ListingCountOutputTypeCountPhotosArgs
+}
+
+/**
+ * ListingCountOutputType without action
+ */
+export type ListingCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ListingCountOutputType
+   */
+  select?: Prisma.ListingCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * ListingCountOutputType without action
+ */
+export type ListingCountOutputTypeCountPhotosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ListingPhotoWhereInput
+}
+
 
 export type ListingSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1114,6 +1295,8 @@ export type ListingSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   updatedAt?: boolean
   deletedAt?: boolean
   crop?: boolean | Prisma.CropDefaultArgs<ExtArgs>
+  photos?: boolean | Prisma.Listing$photosArgs<ExtArgs>
+  _count?: boolean | Prisma.ListingCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["listing"]>
 
 export type ListingSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1202,6 +1385,8 @@ export type ListingSelectScalar = {
 export type ListingOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "farmerId" | "cropId" | "quantityKg" | "unit" | "displayQty" | "qualityGrade" | "aiGrade" | "aiConfidence" | "photoUrl" | "photoThumbnail" | "entryMode" | "voiceText" | "voiceLanguage" | "estimatedPrice" | "pricePerKg" | "status" | "harvestDate" | "expiresAt" | "matchedAt" | "completedAt" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["listing"]>
 export type ListingInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   crop?: boolean | Prisma.CropDefaultArgs<ExtArgs>
+  photos?: boolean | Prisma.Listing$photosArgs<ExtArgs>
+  _count?: boolean | Prisma.ListingCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ListingIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   crop?: boolean | Prisma.CropDefaultArgs<ExtArgs>
@@ -1214,6 +1399,7 @@ export type $ListingPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   name: "Listing"
   objects: {
     crop: Prisma.$CropPayload<ExtArgs>
+    photos: Prisma.$ListingPhotoPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1635,6 +1821,7 @@ readonly fields: ListingFieldRefs;
 export interface Prisma__ListingClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   crop<T extends Prisma.CropDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CropDefaultArgs<ExtArgs>>): Prisma.Prisma__CropClient<runtime.Types.Result.GetResult<Prisma.$CropPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  photos<T extends Prisma.Listing$photosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Listing$photosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ListingPhotoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2081,6 +2268,30 @@ export type ListingDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Limit how many Listings to delete.
    */
   limit?: number
+}
+
+/**
+ * Listing.photos
+ */
+export type Listing$photosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ListingPhoto
+   */
+  select?: Prisma.ListingPhotoSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ListingPhoto
+   */
+  omit?: Prisma.ListingPhotoOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ListingPhotoInclude<ExtArgs> | null
+  where?: Prisma.ListingPhotoWhereInput
+  orderBy?: Prisma.ListingPhotoOrderByWithRelationInput | Prisma.ListingPhotoOrderByWithRelationInput[]
+  cursor?: Prisma.ListingPhotoWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ListingPhotoScalarFieldEnum | Prisma.ListingPhotoScalarFieldEnum[]
 }
 
 /**

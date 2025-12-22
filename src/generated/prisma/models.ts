@@ -11,4 +11,5 @@
 export type * from './models/Crop'
 export type * from './models/Inventory'
 export type * from './models/Listing'
+export type * from './models/ListingPhoto'
 export type * from './commonInputTypes'

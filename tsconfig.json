@@ -105,6 +105,9 @@
   "exclude": [
     "node_modules",
     "dist",
+    "test",
+    "coverage",
+    "jest.config.js",
     "prisma.config.ts",
     "prisma.config.js"
   ]

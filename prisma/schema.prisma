@@ -72,6 +72,13 @@ enum ListingEntryMode {
   PHOTO // Photo-first - AI detects crop from image
 }
 
+/// Photo validation status for quality checks
+enum PhotoValidationStatus {
+  PENDING // Uploaded, not yet validated
+  VALID // Passed quality checks
+  INVALID // Failed quality checks
+}
+
 /// Farmer's crop listing for sale
 model Listing {
   id       Int @id @default(autoincrement())
@@ -114,7 +121,8 @@ model Listing {
   deletedAt DateTime? @map("deleted_at") @db.Timestamptz(6)
 
   // Relations
-  crop Crop @relation(fields: [cropId], references: [id])
+  crop   Crop           @relation(fields: [cropId], references: [id])
+  photos ListingPhoto[]
 
   // Indexes for common queries
   @@index([farmerId])
@@ -122,4 +130,49 @@ model Listing {
   @@index([cropId])
   @@index([createdAt(sort: Desc)])
   @@map("listings")
+}
+
+// ============================================================================
+// PHOTO DOMAIN - Story 3.2: Produce Photo Capture and Upload
+// ============================================================================
+
+/// Listing photo with metadata and validation status
+model ListingPhoto {
+  id        Int @id @default(autoincrement())
+  listingId Int @map("listing_id")
+
+  // Storage
+  photoUrl         String  @map("photo_url") @db.VarChar(500)
+  thumbnailUrl     String? @map("thumbnail_url") @db.VarChar(500)
+  s3Key            String  @map("s3_key") @db.VarChar(500)
+  originalFilename String? @map("original_filename") @db.VarChar(255)
+  contentType      String  @default("image/jpeg") @map("content_type") @db.VarChar(50)
+
+  // File info
+  fileSizeBytes     Int? @map("file_size_bytes")
+  originalSizeBytes Int? @map("original_size_bytes")
+  width             Int?
+  height            Int?
+
+  // Location metadata (AC6)
+  latitude    Decimal? @db.Decimal(10, 8)
+  longitude   Decimal? @db.Decimal(11, 8)
+  deviceModel String?  @map("device_model") @db.VarChar(100)
+
+  // Quality validation (AC3, AC4)
+  qualityScore      Decimal?              @map("quality_score") @db.Decimal(3, 2) // 0.00-1.00
+  validationStatus  PhotoValidationStatus @default(PENDING) @map("validation_status")
+  validationMessage String?               @map("validation_message") @db.Text
+
+  // Flags
+  isPrimary Boolean @default(false) @map("is_primary")
+
+  // Audit
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  // Relations
+  listing Listing @relation(fields: [listingId], references: [id])
+
+  @@index([listingId])
+  @@map("listing_photos")
 }

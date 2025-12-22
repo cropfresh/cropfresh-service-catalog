@@ -52,3 +52,8 @@ export type Inventory = Prisma.InventoryModel
  * Farmer's crop listing for sale
  */
 export type Listing = Prisma.ListingModel
+/**
+ * Model ListingPhoto
+ * Listing photo with metadata and validation status
+ */
+export type ListingPhoto = Prisma.ListingPhotoModel

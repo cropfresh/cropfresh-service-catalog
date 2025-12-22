@@ -32,3 +32,12 @@ export const ListingEntryMode = {
 } as const
 
 export type ListingEntryMode = (typeof ListingEntryMode)[keyof typeof ListingEntryMode]
+
+
+export const PhotoValidationStatus = {
+  PENDING: 'PENDING',
+  VALID: 'VALID',
+  INVALID: 'INVALID'
+} as const
+
+export type PhotoValidationStatus = (typeof PhotoValidationStatus)[keyof typeof PhotoValidationStatus]

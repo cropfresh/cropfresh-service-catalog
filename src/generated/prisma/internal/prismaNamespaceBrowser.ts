@@ -53,7 +53,8 @@ export const AnyNull = runtime.AnyNull
 export const ModelName = {
   Crop: 'Crop',
   Inventory: 'Inventory',
-  Listing: 'Listing'
+  Listing: 'Listing',
+  ListingPhoto: 'ListingPhoto'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -129,6 +130,31 @@ export const ListingScalarFieldEnum = {
 } as const
 
 export type ListingScalarFieldEnum = (typeof ListingScalarFieldEnum)[keyof typeof ListingScalarFieldEnum]
+
+
+export const ListingPhotoScalarFieldEnum = {
+  id: 'id',
+  listingId: 'listingId',
+  photoUrl: 'photoUrl',
+  thumbnailUrl: 'thumbnailUrl',
+  s3Key: 's3Key',
+  originalFilename: 'originalFilename',
+  contentType: 'contentType',
+  fileSizeBytes: 'fileSizeBytes',
+  originalSizeBytes: 'originalSizeBytes',
+  width: 'width',
+  height: 'height',
+  latitude: 'latitude',
+  longitude: 'longitude',
+  deviceModel: 'deviceModel',
+  qualityScore: 'qualityScore',
+  validationStatus: 'validationStatus',
+  validationMessage: 'validationMessage',
+  isPrimary: 'isPrimary',
+  createdAt: 'createdAt'
+} as const
+
+export type ListingPhotoScalarFieldEnum = (typeof ListingPhotoScalarFieldEnum)[keyof typeof ListingPhotoScalarFieldEnum]
 
 
 export const SortOrder = {

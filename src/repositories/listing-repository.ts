@@ -10,7 +10,7 @@
  */
 
 import { prisma } from '../lib/prisma';
-import type { Listing, Prisma } from '../generated/prisma';
+import type { Listing, Prisma } from '../generated/prisma/client';
 import {
     ListingStatus,
     ListingEntryMode,
