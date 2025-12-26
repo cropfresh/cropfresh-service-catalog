@@ -214,6 +214,13 @@ export type EnumListingStatusFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumListingStatusFilter<$PrismaModel> | $Enums.ListingStatus
 }
 
+export type EnumCancellationReasonNullableFilter<$PrismaModel = never> = {
+  equals?: $Enums.CancellationReason | Prisma.EnumCancellationReasonFieldRefInput<$PrismaModel> | null
+  in?: $Enums.CancellationReason[] | Prisma.ListEnumCancellationReasonFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.CancellationReason[] | Prisma.ListEnumCancellationReasonFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumCancellationReasonNullableFilter<$PrismaModel> | $Enums.CancellationReason | null
+}
+
 export type DecimalNullableWithAggregatesFilter<$PrismaModel = never> = {
   equals?: runtime.Decimal | runtime.DecimalJsLike | number | string | Prisma.DecimalFieldRefInput<$PrismaModel> | null
   in?: runtime.Decimal[] | runtime.DecimalJsLike[] | number[] | string[] | Prisma.ListDecimalFieldRefInput<$PrismaModel> | null
@@ -248,6 +255,16 @@ export type EnumListingStatusWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumListingStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumListingStatusFilter<$PrismaModel>
+}
+
+export type EnumCancellationReasonNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.CancellationReason | Prisma.EnumCancellationReasonFieldRefInput<$PrismaModel> | null
+  in?: $Enums.CancellationReason[] | Prisma.ListEnumCancellationReasonFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.CancellationReason[] | Prisma.ListEnumCancellationReasonFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumCancellationReasonNullableWithAggregatesFilter<$PrismaModel> | $Enums.CancellationReason | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumCancellationReasonNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumCancellationReasonNullableFilter<$PrismaModel>
 }
 
 export type IntNullableFilter<$PrismaModel = never> = {
@@ -520,6 +537,13 @@ export type NestedEnumListingStatusFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumListingStatusFilter<$PrismaModel> | $Enums.ListingStatus
 }
 
+export type NestedEnumCancellationReasonNullableFilter<$PrismaModel = never> = {
+  equals?: $Enums.CancellationReason | Prisma.EnumCancellationReasonFieldRefInput<$PrismaModel> | null
+  in?: $Enums.CancellationReason[] | Prisma.ListEnumCancellationReasonFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.CancellationReason[] | Prisma.ListEnumCancellationReasonFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumCancellationReasonNullableFilter<$PrismaModel> | $Enums.CancellationReason | null
+}
+
 export type NestedDecimalNullableWithAggregatesFilter<$PrismaModel = never> = {
   equals?: runtime.Decimal | runtime.DecimalJsLike | number | string | Prisma.DecimalFieldRefInput<$PrismaModel> | null
   in?: runtime.Decimal[] | runtime.DecimalJsLike[] | number[] | string[] | Prisma.ListDecimalFieldRefInput<$PrismaModel> | null
@@ -554,6 +578,16 @@ export type NestedEnumListingStatusWithAggregatesFilter<$PrismaModel = never> = 
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumListingStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumListingStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumCancellationReasonNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.CancellationReason | Prisma.EnumCancellationReasonFieldRefInput<$PrismaModel> | null
+  in?: $Enums.CancellationReason[] | Prisma.ListEnumCancellationReasonFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.CancellationReason[] | Prisma.ListEnumCancellationReasonFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumCancellationReasonNullableWithAggregatesFilter<$PrismaModel> | $Enums.CancellationReason | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumCancellationReasonNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumCancellationReasonNullableFilter<$PrismaModel>
 }
 
 export type NestedEnumPhotoValidationStatusFilter<$PrismaModel = never> = {

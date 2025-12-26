@@ -70,6 +70,8 @@ export type ListingMinAggregateOutputType = {
   expiresAt: Date | null
   matchedAt: Date | null
   completedAt: Date | null
+  cancelledAt: Date | null
+  cancellationReason: $Enums.CancellationReason | null
   createdAt: Date | null
   updatedAt: Date | null
   deletedAt: Date | null
@@ -97,6 +99,8 @@ export type ListingMaxAggregateOutputType = {
   expiresAt: Date | null
   matchedAt: Date | null
   completedAt: Date | null
+  cancelledAt: Date | null
+  cancellationReason: $Enums.CancellationReason | null
   createdAt: Date | null
   updatedAt: Date | null
   deletedAt: Date | null
@@ -124,6 +128,8 @@ export type ListingCountAggregateOutputType = {
   expiresAt: number
   matchedAt: number
   completedAt: number
+  cancelledAt: number
+  cancellationReason: number
   createdAt: number
   updatedAt: number
   deletedAt: number
@@ -175,6 +181,8 @@ export type ListingMinAggregateInputType = {
   expiresAt?: true
   matchedAt?: true
   completedAt?: true
+  cancelledAt?: true
+  cancellationReason?: true
   createdAt?: true
   updatedAt?: true
   deletedAt?: true
@@ -202,6 +210,8 @@ export type ListingMaxAggregateInputType = {
   expiresAt?: true
   matchedAt?: true
   completedAt?: true
+  cancelledAt?: true
+  cancellationReason?: true
   createdAt?: true
   updatedAt?: true
   deletedAt?: true
@@ -229,6 +239,8 @@ export type ListingCountAggregateInputType = {
   expiresAt?: true
   matchedAt?: true
   completedAt?: true
+  cancelledAt?: true
+  cancellationReason?: true
   createdAt?: true
   updatedAt?: true
   deletedAt?: true
@@ -343,6 +355,8 @@ export type ListingGroupByOutputType = {
   expiresAt: Date | null
   matchedAt: Date | null
   completedAt: Date | null
+  cancelledAt: Date | null
+  cancellationReason: $Enums.CancellationReason | null
   createdAt: Date
   updatedAt: Date
   deletedAt: Date | null
@@ -393,6 +407,8 @@ export type ListingWhereInput = {
   expiresAt?: Prisma.DateTimeNullableFilter<"Listing"> | Date | string | null
   matchedAt?: Prisma.DateTimeNullableFilter<"Listing"> | Date | string | null
   completedAt?: Prisma.DateTimeNullableFilter<"Listing"> | Date | string | null
+  cancelledAt?: Prisma.DateTimeNullableFilter<"Listing"> | Date | string | null
+  cancellationReason?: Prisma.EnumCancellationReasonNullableFilter<"Listing"> | $Enums.CancellationReason | null
   createdAt?: Prisma.DateTimeFilter<"Listing"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Listing"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Listing"> | Date | string | null
@@ -422,6 +438,8 @@ export type ListingOrderByWithRelationInput = {
   expiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
   matchedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   completedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  cancelledAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  cancellationReason?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -454,6 +472,8 @@ export type ListingWhereUniqueInput = Prisma.AtLeast<{
   expiresAt?: Prisma.DateTimeNullableFilter<"Listing"> | Date | string | null
   matchedAt?: Prisma.DateTimeNullableFilter<"Listing"> | Date | string | null
   completedAt?: Prisma.DateTimeNullableFilter<"Listing"> | Date | string | null
+  cancelledAt?: Prisma.DateTimeNullableFilter<"Listing"> | Date | string | null
+  cancellationReason?: Prisma.EnumCancellationReasonNullableFilter<"Listing"> | $Enums.CancellationReason | null
   createdAt?: Prisma.DateTimeFilter<"Listing"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Listing"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Listing"> | Date | string | null
@@ -483,6 +503,8 @@ export type ListingOrderByWithAggregationInput = {
   expiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
   matchedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   completedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  cancelledAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  cancellationReason?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -518,6 +540,8 @@ export type ListingScalarWhereWithAggregatesInput = {
   expiresAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Listing"> | Date | string | null
   matchedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Listing"> | Date | string | null
   completedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Listing"> | Date | string | null
+  cancelledAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Listing"> | Date | string | null
+  cancellationReason?: Prisma.EnumCancellationReasonNullableWithAggregatesFilter<"Listing"> | $Enums.CancellationReason | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Listing"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Listing"> | Date | string
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Listing"> | Date | string | null
@@ -543,6 +567,8 @@ export type ListingCreateInput = {
   expiresAt?: Date | string | null
   matchedAt?: Date | string | null
   completedAt?: Date | string | null
+  cancelledAt?: Date | string | null
+  cancellationReason?: $Enums.CancellationReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -572,6 +598,8 @@ export type ListingUncheckedCreateInput = {
   expiresAt?: Date | string | null
   matchedAt?: Date | string | null
   completedAt?: Date | string | null
+  cancelledAt?: Date | string | null
+  cancellationReason?: $Enums.CancellationReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -598,6 +626,8 @@ export type ListingUpdateInput = {
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   matchedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancellationReason?: Prisma.NullableEnumCancellationReasonFieldUpdateOperationsInput | $Enums.CancellationReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -627,6 +657,8 @@ export type ListingUncheckedUpdateInput = {
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   matchedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancellationReason?: Prisma.NullableEnumCancellationReasonFieldUpdateOperationsInput | $Enums.CancellationReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -655,6 +687,8 @@ export type ListingCreateManyInput = {
   expiresAt?: Date | string | null
   matchedAt?: Date | string | null
   completedAt?: Date | string | null
+  cancelledAt?: Date | string | null
+  cancellationReason?: $Enums.CancellationReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -680,6 +714,8 @@ export type ListingUpdateManyMutationInput = {
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   matchedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancellationReason?: Prisma.NullableEnumCancellationReasonFieldUpdateOperationsInput | $Enums.CancellationReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -707,6 +743,8 @@ export type ListingUncheckedUpdateManyInput = {
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   matchedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancellationReason?: Prisma.NullableEnumCancellationReasonFieldUpdateOperationsInput | $Enums.CancellationReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -744,6 +782,8 @@ export type ListingCountOrderByAggregateInput = {
   expiresAt?: Prisma.SortOrder
   matchedAt?: Prisma.SortOrder
   completedAt?: Prisma.SortOrder
+  cancelledAt?: Prisma.SortOrder
+  cancellationReason?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
@@ -782,6 +822,8 @@ export type ListingMaxOrderByAggregateInput = {
   expiresAt?: Prisma.SortOrder
   matchedAt?: Prisma.SortOrder
   completedAt?: Prisma.SortOrder
+  cancelledAt?: Prisma.SortOrder
+  cancellationReason?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
@@ -809,6 +851,8 @@ export type ListingMinOrderByAggregateInput = {
   expiresAt?: Prisma.SortOrder
   matchedAt?: Prisma.SortOrder
   completedAt?: Prisma.SortOrder
+  cancelledAt?: Prisma.SortOrder
+  cancellationReason?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
@@ -888,6 +932,10 @@ export type EnumListingStatusFieldUpdateOperationsInput = {
   set?: $Enums.ListingStatus
 }
 
+export type NullableEnumCancellationReasonFieldUpdateOperationsInput = {
+  set?: $Enums.CancellationReason | null
+}
+
 export type ListingCreateNestedOneWithoutPhotosInput = {
   create?: Prisma.XOR<Prisma.ListingCreateWithoutPhotosInput, Prisma.ListingUncheckedCreateWithoutPhotosInput>
   connectOrCreate?: Prisma.ListingCreateOrConnectWithoutPhotosInput
@@ -922,6 +970,8 @@ export type ListingCreateWithoutCropInput = {
   expiresAt?: Date | string | null
   matchedAt?: Date | string | null
   completedAt?: Date | string | null
+  cancelledAt?: Date | string | null
+  cancellationReason?: $Enums.CancellationReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -949,6 +999,8 @@ export type ListingUncheckedCreateWithoutCropInput = {
   expiresAt?: Date | string | null
   matchedAt?: Date | string | null
   completedAt?: Date | string | null
+  cancelledAt?: Date | string | null
+  cancellationReason?: $Enums.CancellationReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1006,6 +1058,8 @@ export type ListingScalarWhereInput = {
   expiresAt?: Prisma.DateTimeNullableFilter<"Listing"> | Date | string | null
   matchedAt?: Prisma.DateTimeNullableFilter<"Listing"> | Date | string | null
   completedAt?: Prisma.DateTimeNullableFilter<"Listing"> | Date | string | null
+  cancelledAt?: Prisma.DateTimeNullableFilter<"Listing"> | Date | string | null
+  cancellationReason?: Prisma.EnumCancellationReasonNullableFilter<"Listing"> | $Enums.CancellationReason | null
   createdAt?: Prisma.DateTimeFilter<"Listing"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Listing"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"Listing"> | Date | string | null
@@ -1031,6 +1085,8 @@ export type ListingCreateWithoutPhotosInput = {
   expiresAt?: Date | string | null
   matchedAt?: Date | string | null
   completedAt?: Date | string | null
+  cancelledAt?: Date | string | null
+  cancellationReason?: $Enums.CancellationReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1059,6 +1115,8 @@ export type ListingUncheckedCreateWithoutPhotosInput = {
   expiresAt?: Date | string | null
   matchedAt?: Date | string | null
   completedAt?: Date | string | null
+  cancelledAt?: Date | string | null
+  cancellationReason?: $Enums.CancellationReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1100,6 +1158,8 @@ export type ListingUpdateWithoutPhotosInput = {
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   matchedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancellationReason?: Prisma.NullableEnumCancellationReasonFieldUpdateOperationsInput | $Enums.CancellationReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1128,6 +1188,8 @@ export type ListingUncheckedUpdateWithoutPhotosInput = {
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   matchedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancellationReason?: Prisma.NullableEnumCancellationReasonFieldUpdateOperationsInput | $Enums.CancellationReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1154,6 +1216,8 @@ export type ListingCreateManyCropInput = {
   expiresAt?: Date | string | null
   matchedAt?: Date | string | null
   completedAt?: Date | string | null
+  cancelledAt?: Date | string | null
+  cancellationReason?: $Enums.CancellationReason | null
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1179,6 +1243,8 @@ export type ListingUpdateWithoutCropInput = {
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   matchedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancellationReason?: Prisma.NullableEnumCancellationReasonFieldUpdateOperationsInput | $Enums.CancellationReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1206,6 +1272,8 @@ export type ListingUncheckedUpdateWithoutCropInput = {
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   matchedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancellationReason?: Prisma.NullableEnumCancellationReasonFieldUpdateOperationsInput | $Enums.CancellationReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1233,6 +1301,8 @@ export type ListingUncheckedUpdateManyWithoutCropInput = {
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   matchedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancelledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cancellationReason?: Prisma.NullableEnumCancellationReasonFieldUpdateOperationsInput | $Enums.CancellationReason | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1291,6 +1361,8 @@ export type ListingSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   expiresAt?: boolean
   matchedAt?: boolean
   completedAt?: boolean
+  cancelledAt?: boolean
+  cancellationReason?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
@@ -1321,6 +1393,8 @@ export type ListingSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   expiresAt?: boolean
   matchedAt?: boolean
   completedAt?: boolean
+  cancelledAt?: boolean
+  cancellationReason?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
@@ -1349,6 +1423,8 @@ export type ListingSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   expiresAt?: boolean
   matchedAt?: boolean
   completedAt?: boolean
+  cancelledAt?: boolean
+  cancellationReason?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
@@ -1377,12 +1453,14 @@ export type ListingSelectScalar = {
   expiresAt?: boolean
   matchedAt?: boolean
   completedAt?: boolean
+  cancelledAt?: boolean
+  cancellationReason?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
 }
 
-export type ListingOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "farmerId" | "cropId" | "quantityKg" | "unit" | "displayQty" | "qualityGrade" | "aiGrade" | "aiConfidence" | "photoUrl" | "photoThumbnail" | "entryMode" | "voiceText" | "voiceLanguage" | "estimatedPrice" | "pricePerKg" | "status" | "harvestDate" | "expiresAt" | "matchedAt" | "completedAt" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["listing"]>
+export type ListingOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "farmerId" | "cropId" | "quantityKg" | "unit" | "displayQty" | "qualityGrade" | "aiGrade" | "aiConfidence" | "photoUrl" | "photoThumbnail" | "entryMode" | "voiceText" | "voiceLanguage" | "estimatedPrice" | "pricePerKg" | "status" | "harvestDate" | "expiresAt" | "matchedAt" | "completedAt" | "cancelledAt" | "cancellationReason" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["listing"]>
 export type ListingInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   crop?: boolean | Prisma.CropDefaultArgs<ExtArgs>
   photos?: boolean | Prisma.Listing$photosArgs<ExtArgs>
@@ -1423,6 +1501,8 @@ export type $ListingPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     expiresAt: Date | null
     matchedAt: Date | null
     completedAt: Date | null
+    cancelledAt: Date | null
+    cancellationReason: $Enums.CancellationReason | null
     createdAt: Date
     updatedAt: Date
     deletedAt: Date | null
@@ -1872,6 +1952,8 @@ export interface ListingFieldRefs {
   readonly expiresAt: Prisma.FieldRef<"Listing", 'DateTime'>
   readonly matchedAt: Prisma.FieldRef<"Listing", 'DateTime'>
   readonly completedAt: Prisma.FieldRef<"Listing", 'DateTime'>
+  readonly cancelledAt: Prisma.FieldRef<"Listing", 'DateTime'>
+  readonly cancellationReason: Prisma.FieldRef<"Listing", 'CancellationReason'>
   readonly createdAt: Prisma.FieldRef<"Listing", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Listing", 'DateTime'>
   readonly deletedAt: Prisma.FieldRef<"Listing", 'DateTime'>

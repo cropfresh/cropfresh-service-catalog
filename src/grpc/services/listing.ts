@@ -64,6 +64,7 @@ interface UpdateListingStatusRequest {
 interface CancelListingRequest {
     id: number;
     farmerId: number;
+    cancellationReason?: string; // Story 3.9: AC7-9
 }
 
 interface ListingResponse {
@@ -230,17 +231,23 @@ export function listingGrpcHandlers(logger: Logger) {
 
         /**
          * CancelListing - Cancel/soft-delete a listing
+         * Story 3.9: Now accepts cancellation reason for analytics
          */
         CancelListing: async (
             call: ServerUnaryCall<CancelListingRequest, StatusResponse>,
             callback: sendUnaryData<StatusResponse>
         ) => {
             try {
-                const { id, farmerId } = call.request;
+                const { id, farmerId, cancellationReason } = call.request;
 
-                await listingService.cancelListing(id, farmerId);
+                // Story 3.9: Pass reason to service if provided
+                const input = cancellationReason
+                    ? { reason: cancellationReason as any }
+                    : undefined;
 
-                callback(null, { success: true, message: 'Listing cancelled' });
+                await listingService.cancelListing(id, farmerId, input);
+
+                callback(null, { success: true, message: 'Listing cancelled successfully' });
             } catch (error) {
                 logger.error({ error }, 'CancelListing failed');
                 callback(toGrpcError(error), null);
@@ -287,6 +294,13 @@ function toGrpcError(error: any): any {
     }
     if (error.name === 'InvalidStatusTransitionError') {
         return { code: grpc.status.FAILED_PRECONDITION, message: error.message };
+    }
+    // Story 3.9: New error types
+    if (error.name === 'CancellationNotAllowedError') {
+        return { code: grpc.status.FAILED_PRECONDITION, message: error.message };
+    }
+    if (error.name === 'QuantityExceedsOriginalError') {
+        return { code: grpc.status.INVALID_ARGUMENT, message: error.message };
     }
 
     return { code: grpc.status.INTERNAL, message: 'Internal server error' };

@@ -15,11 +15,14 @@ import { logger } from '../utils/logger';
 import {
     ListingStatus,
     ListingEntryMode,
+    CancellationReason,
     CreateListingInput,
     UpdateListingInput,
+    CancelListingInput,
     ListingDto,
     ListingListDto,
     ListListingsFilter,
+    UpdateListingResult,
 } from '../types/listing';
 
 // ============================================================================
@@ -51,6 +54,26 @@ export class InvalidStatusTransitionError extends Error {
     constructor(from: ListingStatus, to: ListingStatus) {
         super(`Cannot transition listing from ${from} to ${to}`);
         this.name = 'InvalidStatusTransitionError';
+    }
+}
+
+/**
+ * Story 3.9: AC8 - Cannot cancel within 2 hours of drop-off
+ */
+export class CancellationNotAllowedError extends Error {
+    constructor(reason: string) {
+        super(reason);
+        this.name = 'CancellationNotAllowedError';
+    }
+}
+
+/**
+ * Story 3.9: AC3 - Cannot increase quantity beyond original
+ */
+export class QuantityExceedsOriginalError extends Error {
+    constructor(original: number, attempted: number) {
+        super(`Cannot increase quantity from ${original}kg to ${attempted}kg`);
+        this.name = 'QuantityExceedsOriginalError';
     }
 }
 
@@ -135,9 +158,18 @@ export class ListingService {
     }
 
     /**
-     * Update listing details (only allowed in DRAFT/PENDING_PHOTO status)
+     * Update listing details - Story 3.9: Now allowed in ACTIVE status too
+     * 
+     * SITUATION: Farmer wants to update listing before match
+     * TASK: Validate quantity <= original, recalculate price if changed
+     * ACTION: Check status, validate input, update DB, return result with price flag
+     * RESULT: Updated listing with priceChanged indicator
      */
-    async updateListing(id: number, farmerId: number, input: UpdateListingInput): Promise<ListingDto> {
+    async updateListingWithResult(
+        id: number,
+        farmerId: number,
+        input: UpdateListingInput
+    ): Promise<UpdateListingResult> {
         const listing = await this.repository.findById(id);
 
         if (!listing || listing.deletedAt) {
@@ -148,8 +180,12 @@ export class ListingService {
             throw new ListingAccessDeniedError();
         }
 
-        // Only allow updates in early stages
-        const allowedStatuses = [ListingStatus.DRAFT, ListingStatus.PENDING_PHOTO];
+        // Story 3.9: Allow ACTIVE status updates (AC2)
+        const allowedStatuses = [
+            ListingStatus.DRAFT,
+            ListingStatus.PENDING_PHOTO,
+            ListingStatus.ACTIVE,
+        ];
         if (!allowedStatuses.includes(listing.status as ListingStatus)) {
             throw new InvalidStatusTransitionError(
                 listing.status as ListingStatus,
@@ -157,12 +193,50 @@ export class ListingService {
             );
         }
 
-        const updated = await this.repository.update(id, input);
+        // Story 3.9 AC3: Validate quantity <= original
+        const originalQty = Number(listing.quantityKg);
+        if (input.quantityKg !== undefined && input.quantityKg > originalQty) {
+            throw new QuantityExceedsOriginalError(originalQty, input.quantityKg);
+        }
+
+        // Track if quantity changed for price recalculation
+        const oldEstimatedPrice = listing.estimatedPrice ? Number(listing.estimatedPrice) : 0;
+        let newEstimatedPrice = oldEstimatedPrice;
+        let priceChanged = false;
+
+        // Recalculate estimated price if quantity changed
+        if (input.quantityKg !== undefined && input.quantityKg !== originalQty) {
+            const pricePerKg = listing.pricePerKg ? Number(listing.pricePerKg) : 0;
+            newEstimatedPrice = pricePerKg * input.quantityKg;
+            priceChanged = true;
+        }
+
+        // Update the listing
+        const updateData = {
+            ...input,
+            estimatedPrice: priceChanged ? newEstimatedPrice : undefined,
+        };
+        await this.repository.update(id, updateData);
         const withCrop = await this.repository.findById(id);
 
-        logger.info({ listingId: id }, 'Listing updated');
+        logger.info({ listingId: id, priceChanged }, 'Listing updated (Story 3.9)');
 
-        return this.toDto(withCrop!);
+        return {
+            listing: this.toDto(withCrop!),
+            priceChanged,
+            newEstimatedPrice: priceChanged ? newEstimatedPrice : undefined,
+            message: priceChanged
+                ? `Listing updated. New estimated earnings: ₹${newEstimatedPrice.toFixed(0)}`
+                : 'Listing updated successfully',
+        };
+    }
+
+    /**
+     * Update listing details (legacy method for backward compatibility)
+     */
+    async updateListing(id: number, farmerId: number, input: UpdateListingInput): Promise<ListingDto> {
+        const result = await this.updateListingWithResult(id, farmerId, input);
+        return result.listing;
     }
 
     /**
@@ -201,9 +275,18 @@ export class ListingService {
     }
 
     /**
-     * Cancel a listing (soft delete)
+     * Cancel a listing - Story 3.9: Enhanced with reason tracking
+     * 
+     * SITUATION: Farmer wants to cancel listing before pickup
+     * TASK: Validate cancellation allowed, store reason for analytics
+     * ACTION: Check status (allow until IN_TRANSIT), update status to CANCELLED
+     * RESULT: Cancelled listing with reason stored
      */
-    async cancelListing(id: number, farmerId: number): Promise<ListingDto> {
+    async cancelListing(
+        id: number,
+        farmerId: number,
+        input?: CancelListingInput
+    ): Promise<ListingDto> {
         const listing = await this.repository.findById(id);
 
         if (!listing) {
@@ -214,15 +297,23 @@ export class ListingService {
             throw new ListingAccessDeniedError();
         }
 
-        // Cannot cancel after IN_TRANSIT
-        const nonCancellable = [ListingStatus.IN_TRANSIT, ListingStatus.DELIVERED, ListingStatus.COMPLETED];
-        if (nonCancellable.includes(listing.status as ListingStatus)) {
-            throw new InvalidStatusTransitionError(listing.status as ListingStatus, ListingStatus.CANCELLED);
+        // Story 3.9 AC8: Cannot cancel after IN_TRANSIT (existing rule)
+        const nonCancellableStatuses = [
+            ListingStatus.IN_TRANSIT,
+            ListingStatus.DELIVERED,
+            ListingStatus.COMPLETED,
+        ];
+        if (nonCancellableStatuses.includes(listing.status as ListingStatus)) {
+            throw new CancellationNotAllowedError(
+                `Cannot cancel: listing is already ${listing.status.toLowerCase()}`
+            );
         }
 
-        const cancelled = await this.repository.cancel(id);
+        // Cancel with reason (Story 3.9 AC9)
+        const reason = input?.reason ?? CancellationReason.OTHER;
+        const cancelled = await this.repository.cancelWithReason(id, reason);
 
-        logger.info({ listingId: id }, 'Listing cancelled');
+        logger.info({ listingId: id, reason }, 'Listing cancelled (Story 3.9)');
 
         return this.toDto({ ...cancelled, crop: listing.crop });
     }
@@ -253,8 +344,21 @@ export class ListingService {
 
     /**
      * Convert database entity to DTO
+     * Extended for Story 3.9 with cancellation fields and edit/cancel flags
      */
     private toDto(listing: any): ListingDto {
+        const status = listing.status as ListingStatus;
+
+        // Story 3.9 AC1: Compute editable/cancellable flags
+        const editableStatuses = [ListingStatus.DRAFT, ListingStatus.PENDING_PHOTO, ListingStatus.ACTIVE];
+        const cancellableStatuses = [
+            ListingStatus.DRAFT,
+            ListingStatus.PENDING_PHOTO,
+            ListingStatus.PENDING_GRADING,
+            ListingStatus.ACTIVE,
+            ListingStatus.MATCHED,
+        ];
+
         return {
             id: listing.id,
             farmerId: listing.farmerId,
@@ -268,10 +372,16 @@ export class ListingService {
             photoUrl: listing.photoUrl ?? undefined,
             photoThumbnail: listing.photoThumbnail ?? undefined,
             entryMode: listing.entryMode as ListingEntryMode,
-            status: listing.status as ListingStatus,
+            status,
             estimatedPrice: listing.estimatedPrice ? Number(listing.estimatedPrice) : undefined,
             pricePerKg: listing.pricePerKg ? Number(listing.pricePerKg) : undefined,
             harvestDate: listing.harvestDate ?? undefined,
+            // Story 3.9: Cancellation tracking
+            cancelledAt: listing.cancelledAt ?? undefined,
+            cancellationReason: listing.cancellationReason ?? undefined,
+            // Story 3.9 AC1: Computed flags for UI
+            canEdit: editableStatuses.includes(status),
+            canCancel: cancellableStatuses.includes(status),
             createdAt: listing.createdAt,
             updatedAt: listing.updatedAt,
         };

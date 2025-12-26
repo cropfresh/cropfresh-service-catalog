@@ -124,6 +124,8 @@ export const ListingScalarFieldEnum = {
   expiresAt: 'expiresAt',
   matchedAt: 'matchedAt',
   completedAt: 'completedAt',
+  cancelledAt: 'cancelledAt',
+  cancellationReason: 'cancellationReason',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   deletedAt: 'deletedAt'

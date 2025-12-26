@@ -34,6 +34,16 @@ export const ListingEntryMode = {
 export type ListingEntryMode = (typeof ListingEntryMode)[keyof typeof ListingEntryMode]
 
 
+export const CancellationReason = {
+  SOLD_ELSEWHERE: 'SOLD_ELSEWHERE',
+  QUALITY_CHANGED: 'QUALITY_CHANGED',
+  CHANGED_MIND: 'CHANGED_MIND',
+  OTHER: 'OTHER'
+} as const
+
+export type CancellationReason = (typeof CancellationReason)[keyof typeof CancellationReason]
+
+
 export const PhotoValidationStatus = {
   PENDING: 'PENDING',
   VALID: 'VALID',

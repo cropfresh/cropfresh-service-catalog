@@ -72,6 +72,14 @@ enum ListingEntryMode {
   PHOTO // Photo-first - AI detects crop from image
 }
 
+/// Story 3.9: Cancellation reason for analytics (AC7)
+enum CancellationReason {
+  SOLD_ELSEWHERE // Farmer sold produce elsewhere
+  QUALITY_CHANGED // Produce quality deteriorated
+  CHANGED_MIND // Farmer changed their mind
+  OTHER // Other reasons
+}
+
 /// Photo validation status for quality checks
 enum PhotoValidationStatus {
   PENDING // Uploaded, not yet validated
@@ -114,6 +122,10 @@ model Listing {
   expiresAt   DateTime?     @map("expires_at") @db.Timestamptz(6)
   matchedAt   DateTime?     @map("matched_at") @db.Timestamptz(6)
   completedAt DateTime?     @map("completed_at") @db.Timestamptz(6)
+
+  // Story 3.9: Cancellation tracking (AC7-9)
+  cancelledAt        DateTime?           @map("cancelled_at") @db.Timestamptz(6)
+  cancellationReason CancellationReason? @map("cancellation_reason")
 
   // Audit
   createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)

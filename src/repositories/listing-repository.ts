@@ -14,6 +14,7 @@ import type { Listing, Prisma } from '../generated/prisma/client';
 import {
     ListingStatus,
     ListingEntryMode,
+    CancellationReason,
     CreateListingInput,
     UpdateListingInput,
     UpdateListingStatusInput,
@@ -161,6 +162,31 @@ export class ListingRepository {
             data: {
                 status: ListingStatus.CANCELLED,
                 deletedAt: new Date(),
+            },
+        });
+    }
+
+    /**
+     * Story 3.9 AC9: Cancel listing with reason for analytics
+     * 
+     * SITUATION: Farmer cancels listing with reason selection
+     * TASK: Store cancellation reason and timestamp
+     * ACTION: Update listing with CANCELLED status, reason, and timestamp
+     * RESULT: Cancelled listing with analytics data
+     * 
+     * @param id - Listing ID
+     * @param reason - Cancellation reason enum value
+     * @returns Updated Listing with CANCELLED status and reason
+     */
+    async cancelWithReason(id: number, reason: CancellationReason): Promise<Listing> {
+        const now = new Date();
+        return prisma.listing.update({
+            where: { id },
+            data: {
+                status: ListingStatus.CANCELLED,
+                cancellationReason: reason,
+                cancelledAt: now,
+                deletedAt: now,
             },
         });
     }

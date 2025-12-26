@@ -18,8 +18,15 @@ jest.mock('../../src/lib/prisma', () => ({
 }));
 
 // Now import the service (it will get the mocked prisma)
-import { ListingService, ListingNotFoundError, ListingAccessDeniedError, InvalidCropError } from '../../src/services/listing-service';
-import { ListingStatus, ListingEntryMode, CreateListingInput } from '../../src/types/listing';
+import {
+    ListingService,
+    ListingNotFoundError,
+    ListingAccessDeniedError,
+    InvalidCropError,
+    CancellationNotAllowedError,
+    QuantityExceedsOriginalError,
+} from '../../src/services/listing-service';
+import { ListingStatus, ListingEntryMode, CreateListingInput, CancellationReason } from '../../src/types/listing';
 
 // ============================================================================
 // Test Suite
@@ -160,28 +167,28 @@ describe('ListingService', () => {
     });
 
     // --------------------------------------------------------------------------
-    // cancelListing
+    // cancelListing - Story 3.9 Tests
     // --------------------------------------------------------------------------
     describe('cancelListing', () => {
+        const createMockListing = (overrides = {}) => ({
+            id: 1,
+            farmerId: 1,
+            status: 'ACTIVE' as any,
+            deletedAt: null,
+            crop: { name: 'Tomato', category: 'Vegetables' },
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            quantityKg: 50 as any,
+            unit: 'kg',
+            entryMode: 'MANUAL' as any,
+            ...overrides,
+        });
+
         it('should cancel listing when in cancellable status', async () => {
             // Arrange
-            const mockListing = {
-                id: 1,
-                farmerId: 1,
-                status: 'ACTIVE' as any,
-                deletedAt: null,
-                crop: { name: 'Tomato', category: 'Vegetables' },
-                createdAt: new Date(),
-                updatedAt: new Date(),
-                quantityKg: 50 as any,
-                unit: 'kg',
-                entryMode: 'MANUAL' as any,
-            };
+            const mockListing = createMockListing();
 
-            // Mock for findById call
             prismaMock.listing.findUnique.mockResolvedValue(mockListing as any);
-
-            // Mock for cancel call
             prismaMock.listing.update.mockResolvedValue({
                 ...mockListing,
                 status: 'CANCELLED' as any,
@@ -195,5 +202,153 @@ describe('ListingService', () => {
             expect(prismaMock.listing.update).toHaveBeenCalled();
             expect(result.status).toBe(ListingStatus.CANCELLED);
         });
+
+        it('Story 3.9 AC9: should store cancellation reason', async () => {
+            // Arrange
+            const mockListing = createMockListing();
+
+            prismaMock.listing.findUnique.mockResolvedValue(mockListing as any);
+            prismaMock.listing.update.mockResolvedValue({
+                ...mockListing,
+                status: 'CANCELLED' as any,
+                cancellationReason: 'SOLD_ELSEWHERE',
+                cancelledAt: new Date(),
+                deletedAt: new Date(),
+            } as any);
+
+            // Act
+            const result = await service.cancelListing(1, 1, { reason: CancellationReason.SOLD_ELSEWHERE });
+
+            // Assert
+            expect(prismaMock.listing.update).toHaveBeenCalledWith(
+                expect.objectContaining({
+                    data: expect.objectContaining({
+                        cancellationReason: CancellationReason.SOLD_ELSEWHERE,
+                    }),
+                })
+            );
+        });
+
+        it('Story 3.9 AC8: should reject cancellation of IN_TRANSIT listings', async () => {
+            // Arrange
+            const mockListing = createMockListing({ status: 'IN_TRANSIT' });
+
+            prismaMock.listing.findUnique.mockResolvedValue(mockListing as any);
+
+            // Act & Assert
+            await expect(service.cancelListing(1, 1)).rejects.toThrow(CancellationNotAllowedError);
+        });
+
+        it('Story 3.9 AC8: should reject cancellation of DELIVERED listings', async () => {
+            // Arrange
+            const mockListing = createMockListing({ status: 'DELIVERED' });
+
+            prismaMock.listing.findUnique.mockResolvedValue(mockListing as any);
+
+            // Act & Assert
+            await expect(service.cancelListing(1, 1)).rejects.toThrow(CancellationNotAllowedError);
+        });
+
+        it('Story 3.9: should allow cancellation of MATCHED listings', async () => {
+            // Arrange - per user feedback, allow until IN_TRANSIT
+            const mockListing = createMockListing({ status: 'MATCHED' });
+
+            prismaMock.listing.findUnique.mockResolvedValue(mockListing as any);
+            prismaMock.listing.update.mockResolvedValue({
+                ...mockListing,
+                status: 'CANCELLED' as any,
+                deletedAt: new Date(),
+            } as any);
+
+            // Act
+            const result = await service.cancelListing(1, 1);
+
+            // Assert
+            expect(result.status).toBe(ListingStatus.CANCELLED);
+        });
+    });
+
+    // --------------------------------------------------------------------------
+    // updateListing - Story 3.9 Tests
+    // --------------------------------------------------------------------------
+    describe('updateListingWithResult', () => {
+        const createMockListing = (overrides = {}) => ({
+            id: 1,
+            farmerId: 1,
+            status: 'ACTIVE' as any,
+            deletedAt: null,
+            crop: { name: 'Tomato', category: 'Vegetables' },
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            quantityKg: 100 as any,
+            unit: 'kg',
+            entryMode: 'MANUAL' as any,
+            pricePerKg: 30 as any,
+            estimatedPrice: 3000 as any,
+            ...overrides,
+        });
+
+        it('Story 3.9 AC2: should allow update of ACTIVE listing', async () => {
+            // Arrange
+            const mockListing = createMockListing({ status: 'ACTIVE' });
+            const updatedListing = { ...mockListing, quantityKg: 80 as any };
+
+            // First call returns original, second call (after update) returns updated
+            prismaMock.listing.findUnique
+                .mockResolvedValueOnce(mockListing as any)
+                .mockResolvedValueOnce(updatedListing as any);
+            prismaMock.listing.update.mockResolvedValue(updatedListing as any);
+
+            // Act
+            const result = await service.updateListingWithResult(1, 1, { quantityKg: 80 });
+
+            // Assert
+            expect(result.listing.quantityKg).toBe(80);
+        });
+
+        it('Story 3.9 AC3: should reject quantity > original', async () => {
+            // Arrange
+            const mockListing = createMockListing({ quantityKg: 50 as any });
+
+            prismaMock.listing.findUnique.mockResolvedValue(mockListing as any);
+
+            // Act & Assert
+            await expect(service.updateListingWithResult(1, 1, { quantityKg: 100 }))
+                .rejects.toThrow(QuantityExceedsOriginalError);
+        });
+
+        it('Story 3.9: should return priceChanged flag when quantity changes', async () => {
+            // Arrange
+            const mockListing = createMockListing();
+
+            prismaMock.listing.findUnique.mockResolvedValue(mockListing as any);
+            prismaMock.listing.update.mockResolvedValue({
+                ...mockListing,
+                quantityKg: 80 as any,
+                estimatedPrice: 2400 as any,
+            } as any);
+
+            // Act
+            const result = await service.updateListingWithResult(1, 1, { quantityKg: 80 });
+
+            // Assert
+            expect(result.priceChanged).toBe(true);
+            expect(result.newEstimatedPrice).toBe(2400);
+        });
+
+        it('Story 3.9: should not flag priceChanged when quantity unchanged', async () => {
+            // Arrange
+            const mockListing = createMockListing();
+
+            prismaMock.listing.findUnique.mockResolvedValue(mockListing as any);
+            prismaMock.listing.update.mockResolvedValue(mockListing as any);
+
+            // Act - only updating qualityGrade, not quantity
+            const result = await service.updateListingWithResult(1, 1, { qualityGrade: 'B' });
+
+            // Assert
+            expect(result.priceChanged).toBe(false);
+        });
     });
 });
+

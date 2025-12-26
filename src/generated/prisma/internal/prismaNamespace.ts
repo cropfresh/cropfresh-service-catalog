@@ -793,6 +793,8 @@ export const ListingScalarFieldEnum = {
   expiresAt: 'expiresAt',
   matchedAt: 'matchedAt',
   completedAt: 'completedAt',
+  cancelledAt: 'cancelledAt',
+  cancellationReason: 'cancellationReason',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   deletedAt: 'deletedAt'
@@ -937,6 +939,20 @@ export type EnumListingStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$Pr
  * Reference to a field of type 'ListingStatus[]'
  */
 export type ListEnumListingStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ListingStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'CancellationReason'
+ */
+export type EnumCancellationReasonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CancellationReason'>
+    
+
+
+/**
+ * Reference to a field of type 'CancellationReason[]'
+ */
+export type ListEnumCancellationReasonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CancellationReason[]'>
     
 
 
