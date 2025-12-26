@@ -54,7 +54,10 @@ export const ModelName = {
   Crop: 'Crop',
   Inventory: 'Inventory',
   Listing: 'Listing',
-  ListingPhoto: 'ListingPhoto'
+  ListingPhoto: 'ListingPhoto',
+  EducationalContent: 'EducationalContent',
+  ContentView: 'ContentView',
+  ContentBookmark: 'ContentBookmark'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -159,12 +162,66 @@ export const ListingPhotoScalarFieldEnum = {
 export type ListingPhotoScalarFieldEnum = (typeof ListingPhotoScalarFieldEnum)[keyof typeof ListingPhotoScalarFieldEnum]
 
 
+export const EducationalContentScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  title: 'title',
+  titleRegional: 'titleRegional',
+  description: 'description',
+  thumbnailUrl: 'thumbnailUrl',
+  contentUrl: 'contentUrl',
+  durationSeconds: 'durationSeconds',
+  readTimeMinutes: 'readTimeMinutes',
+  language: 'language',
+  cropTypes: 'cropTypes',
+  categories: 'categories',
+  qualityIssues: 'qualityIssues',
+  isFeatured: 'isFeatured',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type EducationalContentScalarFieldEnum = (typeof EducationalContentScalarFieldEnum)[keyof typeof EducationalContentScalarFieldEnum]
+
+
+export const ContentViewScalarFieldEnum = {
+  id: 'id',
+  contentId: 'contentId',
+  farmerId: 'farmerId',
+  progressPercent: 'progressPercent',
+  isCompleted: 'isCompleted',
+  viewedAt: 'viewedAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ContentViewScalarFieldEnum = (typeof ContentViewScalarFieldEnum)[keyof typeof ContentViewScalarFieldEnum]
+
+
+export const ContentBookmarkScalarFieldEnum = {
+  id: 'id',
+  contentId: 'contentId',
+  farmerId: 'farmerId',
+  bookmarkedAt: 'bookmarkedAt'
+} as const
+
+export type ContentBookmarkScalarFieldEnum = (typeof ContentBookmarkScalarFieldEnum)[keyof typeof ContentBookmarkScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const NullableJsonNullValueInput = {
+  DbNull: 'DbNull',
+  JsonNull: 'JsonNull'
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
 export const QueryMode = {
@@ -181,4 +238,13 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: 'DbNull',
+  JsonNull: 'JsonNull',
+  AnyNull: 'AnyNull'
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 

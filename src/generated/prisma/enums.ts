@@ -51,3 +51,35 @@ export const PhotoValidationStatus = {
 } as const
 
 export type PhotoValidationStatus = (typeof PhotoValidationStatus)[keyof typeof PhotoValidationStatus]
+
+
+export const ContentType = {
+  VIDEO: 'VIDEO',
+  ARTICLE: 'ARTICLE',
+  INFOGRAPHIC: 'INFOGRAPHIC'
+} as const
+
+export type ContentType = (typeof ContentType)[keyof typeof ContentType]
+
+
+export const ContentCategory = {
+  HARVEST: 'HARVEST',
+  STORAGE: 'STORAGE',
+  PHOTOGRAPHY: 'PHOTOGRAPHY',
+  HANDLING: 'HANDLING',
+  PACKAGING: 'PACKAGING',
+  GENERAL: 'GENERAL'
+} as const
+
+export type ContentCategory = (typeof ContentCategory)[keyof typeof ContentCategory]
+
+
+export const QualityIssue = {
+  BRUISING: 'BRUISING',
+  SIZE_INCONSISTENCY: 'SIZE_INCONSISTENCY',
+  RIPENESS_ISSUES: 'RIPENESS_ISSUES',
+  FRESHNESS_CONCERNS: 'FRESHNESS_CONCERNS',
+  PACKAGING_PROBLEMS: 'PACKAGING_PROBLEMS'
+} as const
+
+export type QualityIssue = (typeof QualityIssue)[keyof typeof QualityIssue]

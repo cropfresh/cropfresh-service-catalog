@@ -188,3 +188,99 @@ model ListingPhoto {
   @@index([listingId])
   @@map("listing_photos")
 }
+
+// ============================================================================
+// EDUCATIONAL CONTENT DOMAIN - Story 3.11: Educational Content on Quality Best Practices
+// ============================================================================
+
+/// Content type for educational materials
+enum ContentType {
+  VIDEO // Video content (YouTube/Vimeo embedded)
+  ARTICLE // Text article with markdown
+  INFOGRAPHIC // Single image infographic
+}
+
+/// Content category for filtering
+enum ContentCategory {
+  HARVEST // Harvest timing and techniques
+  STORAGE // Storage and handling practices
+  PHOTOGRAPHY // Photo tips for AI grading
+  HANDLING // Gentle handling to prevent damage
+  PACKAGING // Proper packaging and crating
+  GENERAL // General farming tips
+}
+
+/// Quality issue type for recommendation matching
+enum QualityIssue {
+  BRUISING // Produce bruising
+  SIZE_INCONSISTENCY // Size variation in batch
+  RIPENESS_ISSUES // Over/under ripe produce
+  FRESHNESS_CONCERNS // Freshness degradation
+  PACKAGING_PROBLEMS // Poor packaging detected
+}
+
+/// Educational content - videos, articles, infographics for farmers
+model EducationalContent {
+  id              String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  type            ContentType
+  title           String            @db.VarChar(255)
+  titleRegional   Json?             @map("title_regional") // {"kn": "ಶೀರ್ಷಿಕೆ", "hi": "शीर्षक"}
+  description     String?           @db.Text
+  thumbnailUrl    String            @map("thumbnail_url") @db.VarChar(500)
+  contentUrl      String            @map("content_url") @db.Text // YouTube URL, S3 URL, or markdown content
+  durationSeconds Int?              @map("duration_seconds") // For videos
+  readTimeMinutes Int?              @map("read_time_minutes") // For articles
+  language        String            @default("en") @db.VarChar(10)
+  cropTypes       String[]          @map("crop_types") // ['TOMATO', 'ONION']
+  categories      ContentCategory[]
+  qualityIssues   QualityIssue[]    @map("quality_issues") // For recommendation matching
+  isFeatured      Boolean           @default(false) @map("is_featured")
+  isActive        Boolean           @default(true) @map("is_active")
+  createdAt       DateTime          @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime          @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Relations
+  views     ContentView[]
+  bookmarks ContentBookmark[]
+
+  @@index([type])
+  @@index([isFeatured])
+  @@index([isActive])
+  @@index([createdAt(sort: Desc)])
+  @@map("educational_content")
+}
+
+/// Content view tracking - tracks farmer's viewing history and progress
+model ContentView {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  contentId       String   @map("content_id") @db.Uuid
+  farmerId        Int      @map("farmer_id")
+  progressPercent Int      @default(0) @map("progress_percent") // 0-100
+  isCompleted     Boolean  @default(false) @map("is_completed")
+  viewedAt        DateTime @default(now()) @map("viewed_at") @db.Timestamptz(6)
+  updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  // Relations
+  content EducationalContent @relation(fields: [contentId], references: [id], onDelete: Cascade)
+
+  @@unique([contentId, farmerId])
+  @@index([farmerId])
+  @@index([viewedAt(sort: Desc)])
+  @@map("content_views")
+}
+
+/// Content bookmark - farmer's saved/bookmarked content
+model ContentBookmark {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  contentId    String   @map("content_id") @db.Uuid
+  farmerId     Int      @map("farmer_id")
+  bookmarkedAt DateTime @default(now()) @map("bookmarked_at") @db.Timestamptz(6)
+
+  // Relations
+  content EducationalContent @relation(fields: [contentId], references: [id], onDelete: Cascade)
+
+  @@unique([contentId, farmerId])
+  @@index([farmerId])
+  @@index([bookmarkedAt(sort: Desc)])
+  @@map("content_bookmarks")
+}

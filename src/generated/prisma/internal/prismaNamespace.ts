@@ -387,7 +387,10 @@ export const ModelName = {
   Crop: 'Crop',
   Inventory: 'Inventory',
   Listing: 'Listing',
-  ListingPhoto: 'ListingPhoto'
+  ListingPhoto: 'ListingPhoto',
+  EducationalContent: 'EducationalContent',
+  ContentView: 'ContentView',
+  ContentBookmark: 'ContentBookmark'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -403,7 +406,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "crop" | "inventory" | "listing" | "listingPhoto"
+    modelProps: "crop" | "inventory" | "listing" | "listingPhoto" | "educationalContent" | "contentView" | "contentBookmark"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -703,6 +706,228 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    EducationalContent: {
+      payload: Prisma.$EducationalContentPayload<ExtArgs>
+      fields: Prisma.EducationalContentFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.EducationalContentFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EducationalContentPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.EducationalContentFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EducationalContentPayload>
+        }
+        findFirst: {
+          args: Prisma.EducationalContentFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EducationalContentPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.EducationalContentFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EducationalContentPayload>
+        }
+        findMany: {
+          args: Prisma.EducationalContentFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EducationalContentPayload>[]
+        }
+        create: {
+          args: Prisma.EducationalContentCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EducationalContentPayload>
+        }
+        createMany: {
+          args: Prisma.EducationalContentCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.EducationalContentCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EducationalContentPayload>[]
+        }
+        delete: {
+          args: Prisma.EducationalContentDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EducationalContentPayload>
+        }
+        update: {
+          args: Prisma.EducationalContentUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EducationalContentPayload>
+        }
+        deleteMany: {
+          args: Prisma.EducationalContentDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.EducationalContentUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.EducationalContentUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EducationalContentPayload>[]
+        }
+        upsert: {
+          args: Prisma.EducationalContentUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EducationalContentPayload>
+        }
+        aggregate: {
+          args: Prisma.EducationalContentAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateEducationalContent>
+        }
+        groupBy: {
+          args: Prisma.EducationalContentGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EducationalContentGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.EducationalContentCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EducationalContentCountAggregateOutputType> | number
+        }
+      }
+    }
+    ContentView: {
+      payload: Prisma.$ContentViewPayload<ExtArgs>
+      fields: Prisma.ContentViewFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ContentViewFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ContentViewPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ContentViewFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ContentViewPayload>
+        }
+        findFirst: {
+          args: Prisma.ContentViewFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ContentViewPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ContentViewFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ContentViewPayload>
+        }
+        findMany: {
+          args: Prisma.ContentViewFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ContentViewPayload>[]
+        }
+        create: {
+          args: Prisma.ContentViewCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ContentViewPayload>
+        }
+        createMany: {
+          args: Prisma.ContentViewCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ContentViewCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ContentViewPayload>[]
+        }
+        delete: {
+          args: Prisma.ContentViewDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ContentViewPayload>
+        }
+        update: {
+          args: Prisma.ContentViewUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ContentViewPayload>
+        }
+        deleteMany: {
+          args: Prisma.ContentViewDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ContentViewUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ContentViewUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ContentViewPayload>[]
+        }
+        upsert: {
+          args: Prisma.ContentViewUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ContentViewPayload>
+        }
+        aggregate: {
+          args: Prisma.ContentViewAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateContentView>
+        }
+        groupBy: {
+          args: Prisma.ContentViewGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ContentViewGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ContentViewCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ContentViewCountAggregateOutputType> | number
+        }
+      }
+    }
+    ContentBookmark: {
+      payload: Prisma.$ContentBookmarkPayload<ExtArgs>
+      fields: Prisma.ContentBookmarkFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ContentBookmarkFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ContentBookmarkPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ContentBookmarkFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ContentBookmarkPayload>
+        }
+        findFirst: {
+          args: Prisma.ContentBookmarkFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ContentBookmarkPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ContentBookmarkFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ContentBookmarkPayload>
+        }
+        findMany: {
+          args: Prisma.ContentBookmarkFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ContentBookmarkPayload>[]
+        }
+        create: {
+          args: Prisma.ContentBookmarkCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ContentBookmarkPayload>
+        }
+        createMany: {
+          args: Prisma.ContentBookmarkCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ContentBookmarkCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ContentBookmarkPayload>[]
+        }
+        delete: {
+          args: Prisma.ContentBookmarkDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ContentBookmarkPayload>
+        }
+        update: {
+          args: Prisma.ContentBookmarkUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ContentBookmarkPayload>
+        }
+        deleteMany: {
+          args: Prisma.ContentBookmarkDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ContentBookmarkUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ContentBookmarkUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ContentBookmarkPayload>[]
+        }
+        upsert: {
+          args: Prisma.ContentBookmarkUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ContentBookmarkPayload>
+        }
+        aggregate: {
+          args: Prisma.ContentBookmarkAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateContentBookmark>
+        }
+        groupBy: {
+          args: Prisma.ContentBookmarkGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ContentBookmarkGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ContentBookmarkCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ContentBookmarkCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -828,12 +1053,66 @@ export const ListingPhotoScalarFieldEnum = {
 export type ListingPhotoScalarFieldEnum = (typeof ListingPhotoScalarFieldEnum)[keyof typeof ListingPhotoScalarFieldEnum]
 
 
+export const EducationalContentScalarFieldEnum = {
+  id: 'id',
+  type: 'type',
+  title: 'title',
+  titleRegional: 'titleRegional',
+  description: 'description',
+  thumbnailUrl: 'thumbnailUrl',
+  contentUrl: 'contentUrl',
+  durationSeconds: 'durationSeconds',
+  readTimeMinutes: 'readTimeMinutes',
+  language: 'language',
+  cropTypes: 'cropTypes',
+  categories: 'categories',
+  qualityIssues: 'qualityIssues',
+  isFeatured: 'isFeatured',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type EducationalContentScalarFieldEnum = (typeof EducationalContentScalarFieldEnum)[keyof typeof EducationalContentScalarFieldEnum]
+
+
+export const ContentViewScalarFieldEnum = {
+  id: 'id',
+  contentId: 'contentId',
+  farmerId: 'farmerId',
+  progressPercent: 'progressPercent',
+  isCompleted: 'isCompleted',
+  viewedAt: 'viewedAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ContentViewScalarFieldEnum = (typeof ContentViewScalarFieldEnum)[keyof typeof ContentViewScalarFieldEnum]
+
+
+export const ContentBookmarkScalarFieldEnum = {
+  id: 'id',
+  contentId: 'contentId',
+  farmerId: 'farmerId',
+  bookmarkedAt: 'bookmarkedAt'
+} as const
+
+export type ContentBookmarkScalarFieldEnum = (typeof ContentBookmarkScalarFieldEnum)[keyof typeof ContentBookmarkScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
 export const QueryMode = {
@@ -850,6 +1129,15 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
 
@@ -978,6 +1266,62 @@ export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
 
 
 /**
+ * Reference to a field of type 'ContentType'
+ */
+export type EnumContentTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ContentType'>
+    
+
+
+/**
+ * Reference to a field of type 'ContentType[]'
+ */
+export type ListEnumContentTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ContentType[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Json'
+ */
+export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+/**
+ * Reference to a field of type 'QueryMode'
+ */
+export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
+    
+
+
+/**
+ * Reference to a field of type 'ContentCategory[]'
+ */
+export type ListEnumContentCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ContentCategory[]'>
+    
+
+
+/**
+ * Reference to a field of type 'ContentCategory'
+ */
+export type EnumContentCategoryFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ContentCategory'>
+    
+
+
+/**
+ * Reference to a field of type 'QualityIssue[]'
+ */
+export type ListEnumQualityIssueFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QualityIssue[]'>
+    
+
+
+/**
+ * Reference to a field of type 'QualityIssue'
+ */
+export type EnumQualityIssueFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QualityIssue'>
+    
+
+
+/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -1073,6 +1417,9 @@ export type GlobalOmitConfig = {
   inventory?: Prisma.InventoryOmit
   listing?: Prisma.ListingOmit
   listingPhoto?: Prisma.ListingPhotoOmit
+  educationalContent?: Prisma.EducationalContentOmit
+  contentView?: Prisma.ContentViewOmit
+  contentBookmark?: Prisma.ContentBookmarkOmit
 }
 
 /* Types for Logging */

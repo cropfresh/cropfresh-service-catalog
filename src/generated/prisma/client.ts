@@ -57,3 +57,18 @@ export type Listing = Prisma.ListingModel
  * Listing photo with metadata and validation status
  */
 export type ListingPhoto = Prisma.ListingPhotoModel
+/**
+ * Model EducationalContent
+ * Educational content - videos, articles, infographics for farmers
+ */
+export type EducationalContent = Prisma.EducationalContentModel
+/**
+ * Model ContentView
+ * Content view tracking - tracks farmer's viewing history and progress
+ */
+export type ContentView = Prisma.ContentViewModel
+/**
+ * Model ContentBookmark
+ * Content bookmark - farmer's saved/bookmarked content
+ */
+export type ContentBookmark = Prisma.ContentBookmarkModel
