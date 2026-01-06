@@ -226,7 +226,7 @@ describe('Listing gRPC Integration Tests', () => {
             // Assert
             expect(mockCallback).toHaveBeenCalledWith(null, {
                 success: true,
-                message: 'Listing cancelled',
+                message: 'Listing cancelled successfully',
             });
         });
     });

@@ -168,3 +168,171 @@ export interface ListListingsFilter {
   page?: number;
   pageSize?: number;
 }
+
+// ============================================================================
+// Story 4.1: Buyer Inventory Browse Types
+// ============================================================================
+
+/**
+ * SortOption - Available sorting options for buyer inventory browse
+ */
+export enum SortOption {
+  PRICE_ASC = 'price_asc',
+  PRICE_DESC = 'price_desc',
+  QUALITY_DESC = 'quality_desc',
+  FRESHNESS = 'freshness',
+  QUANTITY_DESC = 'quantity_desc',
+}
+
+/**
+ * BuyerInventoryFilter - Filter and sort options for inventory browse (AC-4.1.2, AC-4.1.3)
+ * 
+ * @property cropTypes - Filter by crop names (multi-select)
+ * @property grades - Filter by quality grades (A, B, C)
+ * @property quantityMin - Minimum quantity in kg
+ * @property quantityMax - Maximum quantity in kg
+ * @property deliveryDate - Filter by delivery date
+ * @property sort - Sort option
+ * @property cursor - Cursor for pagination
+ * @property limit - Page size (default 20)
+ */
+export interface BuyerInventoryFilter {
+  cropTypes?: string[];
+  grades?: string[];
+  quantityMin?: number;
+  quantityMax?: number;
+  deliveryDate?: Date;
+  sort?: SortOption;
+  cursor?: string;
+  limit?: number;
+}
+
+/**
+ * BuyerInventoryItem - Listing data for buyer inventory response (AC-4.1.1)
+ */
+export interface BuyerInventoryItem {
+  id: number;
+  cropType: string;
+  photoUrl?: string;
+  quantityKg: number;
+  grade: string;
+  pricePerKg: number;
+  deliveryDate?: Date;
+  createdAt: Date;
+  farmerZone?: string;
+}
+
+/**
+ * BuyerInventoryResponse - Paginated inventory response
+ */
+export interface BuyerInventoryResponse {
+  items: BuyerInventoryItem[];
+  total: number;
+  nextCursor?: string;
+  hasMore: boolean;
+}
+
+// ============================================================================
+// Story 4.2: Detailed Produce Information & Digital Twin Preview Types
+// ============================================================================
+
+/**
+ * ListingPhotoDto - Photo data for listing details (AC1)
+ * 
+ * Maps to ListingPhoto Prisma model
+ */
+export interface ListingPhotoDto {
+  id: number;
+  photoUrl: string;
+  thumbnailUrl?: string;
+  isPrimary: boolean;
+  validationStatus: 'PENDING' | 'VALID' | 'INVALID';
+  qualityScore?: number;
+}
+
+/**
+ * DigitalTwinDto - Digital Twin preview data (AC9)
+ * 
+ * Contains harvest timestamp, verification status, AI grading details
+ */
+export interface DigitalTwinDto {
+  harvestTimestamp?: Date;
+  verificationStatus: 'NOT_VERIFIED' | 'PENDING' | 'VERIFIED';
+  freshnessScore?: number;      // 0.0 - 1.0
+  defectCount?: number;         // Number of detected defects
+  aiGradingDetails?: {
+    grade: string;              // A, B, C
+    confidence: number;         // 0.0 - 1.0
+    gradedAt?: Date;
+  };
+}
+
+/**
+ * PriceBreakdownDto - AISP price breakdown (AC5)
+ * 
+ * Shows how price is calculated
+ */
+export interface PriceBreakdownDto {
+  basePrice: number;            // Crop base price per kg
+  qualityAdjustment: number;    // +/- based on grade
+  logisticsCost: number;        // Delivery/logistics fee
+  platformFee: number;          // CropFresh platform fee
+  finalPrice: number;           // Final price per kg
+}
+
+/**
+ * DeliveryOptionDto - Available delivery options (AC7)
+ */
+export interface DeliveryOptionDto {
+  date: Date;
+  label: string;                // "Today", "Tomorrow", etc.
+  isAvailable: boolean;
+}
+
+/**
+ * ListingDetailsDto - Full listing details for buyer view (AC1-9)
+ * 
+ * SITUATION: Buyer taps on produce card in inventory browse
+ * TASK: Return comprehensive listing data for detail screen
+ * ACTION: Aggregate listing, photos, pricing, Digital Twin data
+ * RESULT: Complete data for all AC1-9 requirements
+ */
+export interface ListingDetailsDto {
+  // Core listing info
+  id: number;
+  cropType: string;
+  cropCategory: string;
+  
+  // Photos (AC1)
+  photos: ListingPhotoDto[];
+  primaryPhotoUrl?: string;
+  
+  // Quality (AC2)
+  qualityGrade: string;
+  aiConfidence: number;         // 0.0 - 1.0 (display as %)
+  
+  // Shelf life (AC3)
+  shelfLifeDays: number;
+  shelfLifeDisplay: string;     // "5-7 days"
+  
+  // Location (AC4 - privacy-preserved)
+  farmerZone: string;           // e.g., "Kolar region"
+  
+  // Pricing (AC5)
+  pricePerKg: number;
+  priceBreakdown: PriceBreakdownDto;
+  
+  // Quantity (AC6)
+  quantityKg: number;
+  stockStatus: 'AVAILABLE' | 'LOW_STOCK' | 'OUT_OF_STOCK';
+  
+  // Delivery (AC7)
+  deliveryOptions: DeliveryOptionDto[];
+  
+  // Digital Twin (AC9)
+  digitalTwin: DigitalTwinDto;
+  
+  // Metadata
+  createdAt: Date;
+  updatedAt: Date;
+}

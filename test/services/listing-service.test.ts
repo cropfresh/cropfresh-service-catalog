@@ -350,5 +350,218 @@ describe('ListingService', () => {
             expect(result.priceChanged).toBe(false);
         });
     });
+
+    // --------------------------------------------------------------------------
+    // Story 4.2: getListingDetails - Buyer Detail View Tests
+    // --------------------------------------------------------------------------
+    describe('getListingDetails', () => {
+        const createMockListingWithPhotos = (overrides = {}) => ({
+            id: 1,
+            farmerId: 1,
+            cropId: 10,
+            quantityKg: 50 as any,
+            unit: 'kg',
+            status: 'ACTIVE' as any,
+            entryMode: 'MANUAL' as any,
+            qualityGrade: 'A',
+            aiGrade: 'A',
+            aiConfidence: 0.95 as any,
+            pricePerKg: 36 as any,
+            estimatedPrice: 1800 as any,
+            photoUrl: 'https://s3.example.com/photo1.jpg',
+            harvestDate: new Date('2026-01-03'),
+            deletedAt: null,
+            createdAt: new Date('2026-01-03T10:00:00Z'),
+            updatedAt: new Date('2026-01-03T12:00:00Z'),
+            crop: {
+                name: 'Tomato',
+                category: 'Vegetables',
+                basePrice: 30 as any,
+            },
+            photos: [
+                {
+                    id: 1,
+                    photoUrl: 'https://s3.example.com/farmer-photo.jpg',
+                    thumbnailUrl: 'https://s3.example.com/farmer-thumb.jpg',
+                    isPrimary: true,
+                    validationStatus: 'VALID',
+                    qualityScore: 0.85 as any,
+                },
+                {
+                    id: 2,
+                    photoUrl: 'https://s3.example.com/agent-photo.jpg',
+                    thumbnailUrl: null,
+                    isPrimary: false,
+                    validationStatus: 'VALID',
+                    qualityScore: 0.90 as any,
+                },
+            ],
+            ...overrides,
+        });
+
+        it('Story 4.2 AC1: should return photos with validation status', async () => {
+            // Arrange
+            const mockListing = createMockListingWithPhotos();
+            prismaMock.listing.findFirst.mockResolvedValue(mockListing as any);
+
+            // Act
+            const result = await service.getListingDetails(1);
+
+            // Assert
+            expect(result.photos).toHaveLength(2);
+            expect(result.photos[0].isPrimary).toBe(true);
+            expect(result.photos[0].validationStatus).toBe('VALID');
+            expect(result.primaryPhotoUrl).toBe('https://s3.example.com/farmer-photo.jpg');
+        });
+
+        it('Story 4.2 AC2: should return quality grade with AI confidence', async () => {
+            // Arrange
+            const mockListing = createMockListingWithPhotos();
+            prismaMock.listing.findFirst.mockResolvedValue(mockListing as any);
+
+            // Act
+            const result = await service.getListingDetails(1);
+
+            // Assert
+            expect(result.qualityGrade).toBe('A');
+            expect(result.aiConfidence).toBe(0.95);
+        });
+
+        it('Story 4.2 AC3: should calculate shelf life from harvest date', async () => {
+            // Arrange - harvest 2 days ago, grade A (7 day shelf life)
+            const mockListing = createMockListingWithPhotos({
+                harvestDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+                qualityGrade: 'A',
+            });
+            prismaMock.listing.findFirst.mockResolvedValue(mockListing as any);
+
+            // Act
+            const result = await service.getListingDetails(1);
+
+            // Assert
+            expect(result.shelfLifeDays).toBe(5); // 7 - 2 = 5 days remaining
+            expect(result.shelfLifeDisplay).toMatch(/\d+-\d+ days/);
+        });
+
+        it('Story 4.2 AC4: should return farmer zone (anonymized)', async () => {
+            // Arrange
+            const mockListing = createMockListingWithPhotos();
+            prismaMock.listing.findFirst.mockResolvedValue(mockListing as any);
+
+            // Act
+            const result = await service.getListingDetails(1);
+
+            // Assert - zone should be present but not expose farmer identity
+            expect(result.farmerZone).toBeDefined();
+            expect(typeof result.farmerZone).toBe('string');
+        });
+
+        it('Story 4.2 AC5: should return AISP price breakdown', async () => {
+            // Arrange
+            const mockListing = createMockListingWithPhotos();
+            prismaMock.listing.findFirst.mockResolvedValue(mockListing as any);
+
+            // Act
+            const result = await service.getListingDetails(1);
+
+            // Assert
+            expect(result.priceBreakdown).toBeDefined();
+            expect(result.priceBreakdown.basePrice).toBe(30);
+            expect(result.priceBreakdown.qualityAdjustment).toBeGreaterThan(0); // Grade A = +10%
+            expect(result.priceBreakdown.logisticsCost).toBeGreaterThan(0);
+            expect(result.priceBreakdown.platformFee).toBeGreaterThan(0);
+            expect(result.priceBreakdown.finalPrice).toBeGreaterThan(result.priceBreakdown.basePrice);
+        });
+
+        it('Story 4.2 AC6: should return quantity with stock status AVAILABLE', async () => {
+            // Arrange - 50kg available
+            const mockListing = createMockListingWithPhotos({ quantityKg: 50 as any });
+            prismaMock.listing.findFirst.mockResolvedValue(mockListing as any);
+
+            // Act
+            const result = await service.getListingDetails(1);
+
+            // Assert
+            expect(result.quantityKg).toBe(50);
+            expect(result.stockStatus).toBe('AVAILABLE');
+        });
+
+        it('Story 4.2 AC6: should return LOW_STOCK when quantity < 10kg', async () => {
+            // Arrange
+            const mockListing = createMockListingWithPhotos({ quantityKg: 5 as any });
+            prismaMock.listing.findFirst.mockResolvedValue(mockListing as any);
+
+            // Act
+            const result = await service.getListingDetails(1);
+
+            // Assert
+            expect(result.stockStatus).toBe('LOW_STOCK');
+        });
+
+        it('Story 4.2 AC7: should return delivery options (Today/Tomorrow)', async () => {
+            // Arrange
+            const mockListing = createMockListingWithPhotos();
+            prismaMock.listing.findFirst.mockResolvedValue(mockListing as any);
+
+            // Act
+            const result = await service.getListingDetails(1);
+
+            // Assert
+            expect(result.deliveryOptions).toHaveLength(2);
+            expect(result.deliveryOptions.map(d => d.label)).toContain('Today');
+            expect(result.deliveryOptions.map(d => d.label)).toContain('Tomorrow');
+            expect(result.deliveryOptions[1].isAvailable).toBe(true); // Tomorrow always available
+        });
+
+        it('Story 4.2 AC9: should return Digital Twin preview with verification status', async () => {
+            // Arrange - has photos and AI grade = VERIFIED
+            const mockListing = createMockListingWithPhotos();
+            prismaMock.listing.findFirst.mockResolvedValue(mockListing as any);
+
+            // Act
+            const result = await service.getListingDetails(1);
+
+            // Assert
+            expect(result.digitalTwin).toBeDefined();
+            expect(result.digitalTwin.verificationStatus).toBe('VERIFIED');
+            expect(result.digitalTwin.harvestTimestamp).toBeDefined();
+            expect(result.digitalTwin.aiGradingDetails).toBeDefined();
+            expect(result.digitalTwin.aiGradingDetails?.grade).toBe('A');
+            expect(result.digitalTwin.aiGradingDetails?.confidence).toBe(0.95);
+        });
+
+        it('Story 4.2 AC9: should return PENDING verification when photos but no AI grade', async () => {
+            // Arrange
+            const mockListing = createMockListingWithPhotos({ aiGrade: null });
+            prismaMock.listing.findFirst.mockResolvedValue(mockListing as any);
+
+            // Act
+            const result = await service.getListingDetails(1);
+
+            // Assert
+            expect(result.digitalTwin.verificationStatus).toBe('PENDING');
+        });
+
+        it('should throw ListingNotFoundError when listing not ACTIVE', async () => {
+            // Arrange - findFirst returns null for non-ACTIVE listings
+            prismaMock.listing.findFirst.mockResolvedValue(null);
+
+            // Act & Assert
+            await expect(service.getListingDetails(999)).rejects.toThrow(ListingNotFoundError);
+        });
+
+        it('should return crop type and category', async () => {
+            // Arrange
+            const mockListing = createMockListingWithPhotos();
+            prismaMock.listing.findFirst.mockResolvedValue(mockListing as any);
+
+            // Act
+            const result = await service.getListingDetails(1);
+
+            // Assert
+            expect(result.cropType).toBe('Tomato');
+            expect(result.cropCategory).toBe('Vegetables');
+        });
+    });
 });
 

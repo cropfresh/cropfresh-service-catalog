@@ -98,6 +98,70 @@ interface StatusResponse {
 }
 
 // ============================================================================
+// Story 4.2: GetListingDetails RPC Types (AC1-9)
+// ============================================================================
+
+interface GetListingDetailsRequest {
+    id: number;
+}
+
+interface ListingPhotoGrpc {
+    id: number;
+    photoUrl: string;
+    thumbnailUrl: string;
+    isPrimary: boolean;
+    validationStatus: string;
+    qualityScore: number;
+}
+
+interface PriceBreakdownGrpc {
+    basePrice: number;
+    qualityAdjustment: number;
+    logisticsCost: number;
+    platformFee: number;
+    finalPrice: number;
+}
+
+interface DeliveryOptionGrpc {
+    date: string;
+    label: string;
+    isAvailable: boolean;
+}
+
+interface DigitalTwinGrpc {
+    harvestTimestamp: string;
+    verificationStatus: string;
+    freshnessScore: number;
+    defectCount: number;
+    aiGradingDetails: {
+        grade: string;
+        confidence: number;
+        gradedAt: string;
+    } | null;
+}
+
+interface GetListingDetailsResponse {
+    id: number;
+    cropType: string;
+    cropCategory: string;
+    photos: ListingPhotoGrpc[];
+    primaryPhotoUrl: string;
+    qualityGrade: string;
+    aiConfidence: number;
+    shelfLifeDays: number;
+    shelfLifeDisplay: string;
+    farmerZone: string;
+    pricePerKg: number;
+    priceBreakdown: PriceBreakdownGrpc;
+    quantityKg: number;
+    stockStatus: string;
+    deliveryOptions: DeliveryOptionGrpc[];
+    digitalTwin: DigitalTwinGrpc;
+    createdAt: string;
+    updatedAt: string;
+}
+
+// ============================================================================
 // Handler Factory
 // ============================================================================
 
@@ -147,6 +211,29 @@ export function listingGrpcHandlers(logger: Logger) {
                 callback(null, toGrpcListing(listing));
             } catch (error) {
                 logger.error({ error }, 'GetListing failed');
+                callback(toGrpcError(error), null);
+            }
+        },
+
+        /**
+         * Story 4.2: GetListingDetails - Get detailed listing for buyer view (AC1-9)
+         * 
+         * SITUATION: Buyer taps produce card in inventory browse screen
+         * TASK: Return comprehensive listing data for detail screen
+         * ACTION: Call listingService.getListingDetails, transform to gRPC response
+         * RESULT: Complete data for all AC1-9 requirements (public access)
+         */
+        GetListingDetails: async (
+            call: ServerUnaryCall<GetListingDetailsRequest, GetListingDetailsResponse>,
+            callback: sendUnaryData<GetListingDetailsResponse>
+        ) => {
+            try {
+                const { id } = call.request;
+
+                const details = await listingService.getListingDetails(id);
+                callback(null, toGrpcListingDetails(details));
+            } catch (error) {
+                logger.error({ error }, 'GetListingDetails failed');
                 callback(toGrpcError(error), null);
             }
         },
@@ -276,6 +363,53 @@ function toGrpcListing(listing: any): ListingResponse {
         estimatedPrice: listing.estimatedPrice || 0,
         pricePerKg: listing.pricePerKg || 0,
         createdAt: listing.createdAt.toISOString(),
+    };
+}
+
+/**
+ * Story 4.2: Transform ListingDetailsDto to gRPC response format
+ */
+function toGrpcListingDetails(details: any): GetListingDetailsResponse {
+    return {
+        id: details.id,
+        cropType: details.cropType,
+        cropCategory: details.cropCategory,
+        photos: details.photos.map((p: any) => ({
+            id: p.id,
+            photoUrl: p.photoUrl,
+            thumbnailUrl: p.thumbnailUrl || '',
+            isPrimary: p.isPrimary,
+            validationStatus: p.validationStatus,
+            qualityScore: p.qualityScore || 0,
+        })),
+        primaryPhotoUrl: details.primaryPhotoUrl || '',
+        qualityGrade: details.qualityGrade,
+        aiConfidence: details.aiConfidence,
+        shelfLifeDays: details.shelfLifeDays,
+        shelfLifeDisplay: details.shelfLifeDisplay,
+        farmerZone: details.farmerZone,
+        pricePerKg: details.pricePerKg,
+        priceBreakdown: details.priceBreakdown,
+        quantityKg: details.quantityKg,
+        stockStatus: details.stockStatus,
+        deliveryOptions: details.deliveryOptions.map((d: any) => ({
+            date: d.date.toISOString(),
+            label: d.label,
+            isAvailable: d.isAvailable,
+        })),
+        digitalTwin: {
+            harvestTimestamp: details.digitalTwin.harvestTimestamp?.toISOString() || '',
+            verificationStatus: details.digitalTwin.verificationStatus,
+            freshnessScore: details.digitalTwin.freshnessScore || 0,
+            defectCount: details.digitalTwin.defectCount || 0,
+            aiGradingDetails: details.digitalTwin.aiGradingDetails ? {
+                grade: details.digitalTwin.aiGradingDetails.grade,
+                confidence: details.digitalTwin.aiGradingDetails.confidence,
+                gradedAt: details.digitalTwin.aiGradingDetails.gradedAt?.toISOString() || '',
+            } : null,
+        },
+        createdAt: details.createdAt.toISOString(),
+        updatedAt: details.updatedAt.toISOString(),
     };
 }
 

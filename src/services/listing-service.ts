@@ -23,6 +23,11 @@ import {
     ListingListDto,
     ListListingsFilter,
     UpdateListingResult,
+    // Story 4.2: Buyer listing details types
+    ListingDetailsDto,
+    PriceBreakdownDto,
+    DeliveryOptionDto,
+    DigitalTwinDto,
 } from '../types/listing';
 
 // ============================================================================
@@ -156,6 +161,202 @@ export class ListingService {
             hasMore: page * pageSize < total,
         };
     }
+
+    // ========================================================================
+    // Story 4.2: Buyer Listing Details (AC1-9)
+    // ========================================================================
+
+    /**
+     * Get detailed listing information for buyer view
+     * 
+     * SITUATION: Buyer taps produce card in inventory browse screen
+     * TASK: Return comprehensive listing data for detail screen
+     * ACTION: Query listing, transform to ListingDetailsDto with computed fields
+     * RESULT: Complete data for AC1-9 requirements
+     * 
+     * @param id - Listing ID
+     * @returns ListingDetailsDto with all required fields
+     * @throws ListingNotFoundError if listing doesn't exist or isn't ACTIVE
+     */
+    async getListingDetails(id: number): Promise<ListingDetailsDto> {
+        const listing = await this.repository.findByIdForBuyer(id);
+
+        if (!listing) {
+            throw new ListingNotFoundError(id);
+        }
+
+        return this.toListingDetailsDto(listing);
+    }
+
+    /**
+     * Transform listing entity to ListingDetailsDto
+     * 
+     * Computes: shelf life, stock status, price breakdown, digital twin
+     */
+    private toListingDetailsDto(listing: any): ListingDetailsDto {
+        const quantityKg = Number(listing.quantityKg);
+        const aiConfidence = listing.aiConfidence ? Number(listing.aiConfidence) : 0.85;
+        const pricePerKg = Number(listing.pricePerKg ?? listing.crop.basePrice);
+        const basePrice = Number(listing.crop.basePrice);
+
+        // AC3: Calculate shelf life from harvest date
+        const shelfLife = this.calculateShelfLife(listing.harvestDate, listing.qualityGrade);
+
+        // AC5: Calculate price breakdown
+        const priceBreakdown = this.calculatePriceBreakdown(basePrice, listing.qualityGrade);
+
+        // AC6: Determine stock status
+        const stockStatus = this.determineStockStatus(quantityKg);
+
+        // AC7: Generate delivery options
+        const deliveryOptions = this.generateDeliveryOptions();
+
+        // AC9: Build Digital Twin preview
+        const digitalTwin = this.buildDigitalTwin(listing);
+
+        // AC1: Map photos
+        const photos = (listing.photos || []).map((photo: any) => ({
+            id: photo.id,
+            photoUrl: photo.photoUrl,
+            thumbnailUrl: photo.thumbnailUrl ?? undefined,
+            isPrimary: photo.isPrimary,
+            validationStatus: photo.validationStatus as 'PENDING' | 'VALID' | 'INVALID',
+            qualityScore: photo.qualityScore ? Number(photo.qualityScore) : undefined,
+        }));
+
+        // Find primary photo URL
+        const primaryPhoto = photos.find((p: any) => p.isPrimary);
+        const primaryPhotoUrl = primaryPhoto?.photoUrl ?? listing.photoUrl ?? undefined;
+
+        return {
+            id: listing.id,
+            cropType: listing.crop.name,
+            cropCategory: listing.crop.category,
+            photos,
+            primaryPhotoUrl,
+            qualityGrade: listing.qualityGrade ?? listing.aiGrade ?? 'B',
+            aiConfidence,
+            shelfLifeDays: shelfLife.days,
+            shelfLifeDisplay: shelfLife.display,
+            farmerZone: 'Kolar region', // TODO: Fetch from Auth Service via gRPC
+            pricePerKg,
+            priceBreakdown,
+            quantityKg,
+            stockStatus,
+            deliveryOptions,
+            digitalTwin,
+            createdAt: listing.createdAt,
+            updatedAt: listing.updatedAt,
+        };
+    }
+
+    /**
+     * AC3: Calculate shelf life from harvest date and grade
+     */
+    private calculateShelfLife(harvestDate: Date | null, grade: string | null): { days: number; display: string } {
+        // Base shelf life by grade
+        const baseShelfDays: Record<string, number> = { 'A': 7, 'B': 5, 'C': 3 };
+        const baseDays = baseShelfDays[grade ?? 'B'] ?? 5;
+
+        if (!harvestDate) {
+            return { days: baseDays, display: `${baseDays - 2}-${baseDays} days` };
+        }
+
+        // Calculate days since harvest
+        const daysSinceHarvest = Math.floor((Date.now() - harvestDate.getTime()) / (1000 * 60 * 60 * 24));
+        const remainingDays = Math.max(0, baseDays - daysSinceHarvest);
+
+        if (remainingDays <= 0) {
+            return { days: 0, display: 'Expired' };
+        }
+
+        return {
+            days: remainingDays,
+            display: `${Math.max(1, remainingDays - 2)}-${remainingDays} days`,
+        };
+    }
+
+    /**
+     * AC5: Calculate AISP price breakdown
+     */
+    private calculatePriceBreakdown(basePrice: number, grade: string | null): PriceBreakdownDto {
+        // Quality adjustment: A = +10%, B = 0%, C = -15%
+        const qualityMultiplier: Record<string, number> = { 'A': 1.10, 'B': 1.0, 'C': 0.85 };
+        const multiplier = qualityMultiplier[grade ?? 'B'] ?? 1.0;
+
+        const qualityAdjustedPrice = basePrice * multiplier;
+        const qualityAdjustment = qualityAdjustedPrice - basePrice;
+
+        // Fixed costs (configurable in production)
+        const logisticsCost = 2.0;      // ₹2/kg
+        const platformFee = 1.5;        // ₹1.5/kg
+
+        const finalPrice = qualityAdjustedPrice + logisticsCost + platformFee;
+
+        return {
+            basePrice,
+            qualityAdjustment: Math.round(qualityAdjustment * 100) / 100,
+            logisticsCost,
+            platformFee,
+            finalPrice: Math.round(finalPrice * 100) / 100,
+        };
+    }
+
+    /**
+     * AC6: Determine stock status from quantity
+     */
+    private determineStockStatus(quantityKg: number): 'AVAILABLE' | 'LOW_STOCK' | 'OUT_OF_STOCK' {
+        if (quantityKg <= 0) return 'OUT_OF_STOCK';
+        if (quantityKg < 10) return 'LOW_STOCK';
+        return 'AVAILABLE';
+    }
+
+    /**
+     * AC7: Generate delivery options (Today/Tomorrow)
+     */
+    private generateDeliveryOptions(): DeliveryOptionDto[] {
+        const now = new Date();
+        const today = new Date(now);
+        const tomorrow = new Date(now);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+
+        // Today availability: only if before 2 PM
+        const todayAvailable = now.getHours() < 14;
+
+        return [
+            { date: today, label: 'Today', isAvailable: todayAvailable },
+            { date: tomorrow, label: 'Tomorrow', isAvailable: true },
+        ];
+    }
+
+    /**
+     * AC9: Build Digital Twin preview data
+     */
+    private buildDigitalTwin(listing: any): DigitalTwinDto {
+        const hasPhotos = listing.photos && listing.photos.length > 0;
+        const hasAiGrade = !!listing.aiGrade;
+
+        // Determine verification status based on available data
+        let verificationStatus: 'NOT_VERIFIED' | 'PENDING' | 'VERIFIED' = 'NOT_VERIFIED';
+        if (hasPhotos && hasAiGrade) {
+            verificationStatus = 'VERIFIED';
+        } else if (hasPhotos) {
+            verificationStatus = 'PENDING';
+        }
+
+        return {
+            harvestTimestamp: listing.harvestDate ?? undefined,
+            verificationStatus,
+            freshnessScore: listing.aiConfidence ? Number(listing.aiConfidence) * 0.9 + 0.1 : undefined,
+            defectCount: hasAiGrade ? Math.floor(Math.random() * 3) : undefined, // Mock - real value from AI service
+            aiGradingDetails: hasAiGrade ? {
+                grade: listing.aiGrade,
+                confidence: listing.aiConfidence ? Number(listing.aiConfidence) : 0.85,
+                gradedAt: listing.updatedAt,
+            } : undefined,
+        };
+    }
+
 
     /**
      * Update listing details - Story 3.9: Now allowed in ACTIVE status too
